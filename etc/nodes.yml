@@ -1,0 +1,26 @@
+nodes:
+    - peerId: 12D3KooWEPvwLVBZaE8adsDoLh7QT9wrsw4PC82AdcDGYPgssNH7
+      address: [ "any-sync-node-1:443" ]
+      encryptionPubKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs08DIQPUmLv2IiawramM4Ris8NHvmedA/9H9EcMizKmYH5zMoQdL5wfR+WQpsq746zt3MNAvUsq/oB9UbecpHahgHsqnX6sSq6txnUI6vyNExrSPMFd0g8aFbPwK6DWppa/ULWTNTkAsS1qU/EpfPKVHpwHpoWlgpsVxrqrK3JDz7ghilUDbtcUtIl0qzBxUILpBDySV0tfyugJAsqCE/brO81IDgNV+W3qKgu6Vs0wgPBG/iR//jjlkTsyzElEhqexSm6QMKYShZqa3J5EW+xlAW3NGJdF/Z6ddvBOa9BwSAHQ+kbzkeUd6CMxdLMOKDNCpTm7fyrp/oq0za7OtgwIDAQAB
+      types:
+        - tree
+    - peerId: 12D3KooWFMZGP4Jp4uNgDKAjzFpoyYaHbpAVL2jMv9NdYJMFgaqp
+      address: [ "any-sync-node-2:443" ]
+      encryptionPubKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwj8ZDMLGBxF1JeA0iT7wY80fKtr8Iv4q8Yt8TAXvM7Tkb9+dubO2CamWPmEHSyleJW8stG/JucVKJkNTZ52uqEpaJwq0M69k5xy5P0g2tFhucxPiJP9hr6S4k/1qxyAFGHTpHZ3tbeUTYivonkE3WIIOK3au/AL+CCuJSResfCdZ/YMgcvatCkS116nnNt7uoldcXDBnjUo6RRB4uRwqShDmG+iPanz8HpneqQNvVUUwfPfT0hgCeCmVEZHdmv793VzeSudmgyFjp7nm97vWZpivLS0F+5+xJ4K/h0Qdu8HIe7+dStJTXaMymeBpBCmGslp+LDVd6pjWrYa83UZ6iQIDAQAB
+      types:
+        - tree
+    - peerId: 12D3KooWPQSfv8JbmwXv3QvcPQfSEuM2PujnMVXfcMojVgc5zGFD
+      address: [ "any-sync-node-3:443" ]
+      encryptionPubKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt07voyAe3snEI4JfeN9tnh1FLP04zh949Rra637JNRclDj7inHeRdUFZr+0PVxrwkvVjwrl0Qe0j3xT1SLbXLLr0DZ4syAyB2uKL+n0ackFSKixPQB5NG20sJwen7l9tx7z9y/2OGqusECASd6Hrz+Z1N0Sww6juDcx32ItcyDhVN60+MUSBIOxr4g85kEAjU4nQiD4hahpKxyJb1wf2R1Ic3bi71kPrvP7jsXbOZrQhzSLBmQxMMF7LxAwqJgF/WtoDKsCSCACz2h+GU0Hx0NMJPi33Jyc+rgWAn03ENhumiEh4r9Yar+lcUG6XZ4hwmd9u4QaWT1E5DKsTLGsWAwIDAQAB
+      types:
+        - tree
+    - peerId: 12D3KooWPUMFQFeiyZDwS2aGZJfcYZamwq3NLQJT6RskEzPfP2Xd
+      address: [ "any-sync-coordinator:443" ]
+      encryptionPubKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4iy30MBtOzzZRzDyccwRLbJ0SBNUD8+yxNv0DsYegK1IHZFxSoj4CEPGXZpGDvKbzuFIy25i+wT0HCTgA+ioFr3usP+piQ8eEQeab2TG9cL/4TE+5Z/LAW96G/7twhJgTltjvgFRTv0i+OZEU5QBeIf2ykNa5Iy189eEnfuWm9JKvSSwTGlccQTjw3kPwv0MvaopiCB+T5gSSX5jW96gn+3SWPaGk9Up1WFhEgZWJg7XlHq9999tbpg7gCeRhljTGxA5iUeez1cU7jsIAiQLOE5Pc1fQ/tpKHBt7eCWjNHbHHFg/HUauvr4Uu9RQCnzV8tzynxJv1i+JTOxCTVTc9QIDAQAB
+      types:
+        - coordinator
+    - peerId: 12D3KooWMwE15iEG51Sewt2zYqwgbrBz6QMuFVdWLBMes1SADtCh
+      address: [ "any-sync-filenode:443" ]
+      encryptionPubKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvheEs4zUvPHxwnjY5pzTiagwvG2G8pb9fNZdiJKq3KD81QHCUOKuSbblp+bNeGsvcBJmEO3YuAk/Vwjc9P35TriW/6DUY1/qi5PDIH+V9XR41speDVHaTHtHlzatqCE11pDD1pY8E9O28kzZ0fGujsoGKoqPBETYEBTJZD9zgu6GHq2TKdtenca4kROVUwMV8RT1BOoa1T18ndQupkDcY+y7f8ov1eFM4uTg8Kqe64BuRs6NKe5Bh69RaAAOXVv4imqPY85MjKtOrWb4e2GcSLvbx3US1GnnEMPWIuL+Ma7hqB3PKsYRzECDuAqAvzPTDl65OewMYiuujfC4unQkBQIDAQAB
+      types:
+        - file

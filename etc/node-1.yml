@@ -1,0 +1,31 @@
+account:
+    peerId: 12D3KooWEPvwLVBZaE8adsDoLh7QT9wrsw4PC82AdcDGYPgssNH7
+    peerKey: /UxND22fiH7QgOaMee30x9ZHLFDMY8wWIqWSqOWCvtBEB/dbsFViVokAalOqgRT23hcZLGB8gkLinOc3+u996g==
+    signingKey: /UxND22fiH7QgOaMee30x9ZHLFDMY8wWIqWSqOWCvtBEB/dbsFViVokAalOqgRT23hcZLGB8gkLinOc3+u996g==
+    encryptionKey: MIIEpQIBAAKCAQEAs08DIQPUmLv2IiawramM4Ris8NHvmedA/9H9EcMizKmYH5zMoQdL5wfR+WQpsq746zt3MNAvUsq/oB9UbecpHahgHsqnX6sSq6txnUI6vyNExrSPMFd0g8aFbPwK6DWppa/ULWTNTkAsS1qU/EpfPKVHpwHpoWlgpsVxrqrK3JDz7ghilUDbtcUtIl0qzBxUILpBDySV0tfyugJAsqCE/brO81IDgNV+W3qKgu6Vs0wgPBG/iR//jjlkTsyzElEhqexSm6QMKYShZqa3J5EW+xlAW3NGJdF/Z6ddvBOa9BwSAHQ+kbzkeUd6CMxdLMOKDNCpTm7fyrp/oq0za7OtgwIDAQABAoIBAQCWXVX0Y6/ufQEE1okmuJ5JTVYJhSN2XnUlkkS0ln0iP74wFF+NUf8WuHoetx44l35qVS24o3xr41YawuscVtMl6cLhT3RYR6+agmT+SUHWc48DSvsgwNYWg230XNAQtp+TMAWwI23/htUeQ9HYV83Rn5Ccvn/bOfExKTYSEWuY1hUg+YsQ70SPX9w71V3GVcq4pPyp3Hy/qj53/rjFAx4M/ssp4m7eY8ptQHQejSPEQRuTqje6Q1yS91exMXg4ZBbiBhkvrVDpPaShwv0U9e/1nlD+yXPbxWSDNrM42aJau1LREF02qgl2PhQrsB0HCw8TVFN+EfCaPdlwnZzsuzfRAoGBAOfvmDspH898EXUsjUUovgscVThdJ/C1EY1SvbvqWvPiSQ/OXSO8xrb+Zs9trKSIz5Xc2mTPvi2uOwIYU/QMxLYfDiscW2BA+yiUP0rPfAuWZ5ZqDZxhhgZtCuuNHBXO5cYaU73cZZaTPjsuDloZTiwuAxAZezhQBjfGpgpl3prlAoGBAMXpmDkJfzMeGJ1rdYDzM2z+i6Jcs3Q7xL8bpttjEgGI3lhMs4ub1itxVfGpePitekJCyx8d6IATwUHH07ZbtnCGriRqIj1LYR1gdZITLyKJb5Ji7n8e7SUJgIhbrkB5Uf7jrjz77JFkp6DfEEoWiq59rzlLbzY/0t4GdVhbWFhHAoGAXlitQSuKYBlk9Jgp4z8eh2CAHgxu6dCOEkHdImrDkr+y3rYgVyA8aUX1Rl2jw85POvP69tU21Fgycri4tebXwgnB9rFzTiVAxZIAaQsbt474FkyPutRE86o5rfXZvdlKyJn/BJV50ZWV0/b5KZdvoDMbVdo3sIGE9f1dn48uzS0CgYEAtxpkPDjeFxP8IABgaRoYdPmXhHKRkLMPVuQlXontCcBwPW9RGZPm9LBZnEh35FLTbuRO+o34Ii6kuNBAvlFhm//us0ACR4Uq5zvr6maXUDOpJt0i3DdnncGJyh5QO9RCmThaZo+JEgb2024squ7qBX/AkpiI3r7zv3hoLoPsW1cCgYEAvymSafGXd2gKEdYoeI8eVoVRpkmAywlYs1NId6apP4yCNo2ehakku48rPdmROTv7ja9dyodcNvnZIxOeGgnz5vQR2vLiMXEUE+fCWnoRbkd8UUgtGqf+Z/+s7AQflRCBUfbmzmmi4Sxs2DTffkWwXQTfO2vpFopcdBX31MBAta8=
+
+apiServer:
+    server:
+        listenAddrs:
+            - 0.0.0.0:8080
+    stream:
+        maxMsgSizeMb: 256
+        timeoutMilliseconds: 1000
+
+space:
+    gcTTL: 60
+    syncPeriod: 600
+storage:
+    path: /storage
+
+nodeSync:
+    periodicSyncHours: 2
+    syncOnStart: true
+
+grpcServer:
+    server:
+        listenAddrs:
+            - any-sync-node-1:443
+    stream:
+        maxMsgSizeMb: 256
+        timeoutMilliseconds: 1000
