@@ -1,0 +1,72 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+  any-sync-node-1:
+    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    ports:
+      - 4431:443
+      - 8081:8080
+      - 8001:8000
+    volumes:
+      - ./etc/any-sync-node-1/:/etc/any-sync-node/
+      - ./storage/any-sync-node-1/:/storage/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+  any-sync-node-2:
+    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    ports:
+      - 4432:443
+      - 8082:8080
+      - 8002:8000
+    volumes:
+      - ./etc/any-sync-node-2/:/etc/any-sync-node/
+      - ./storage/any-sync-node-2/:/storage/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+  any-sync-node-3:
+    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    ports:
+      - 4433:443
+      - 8083:8080
+      - 8003:8000
+    volumes:
+      - ./etc/any-sync-node-3/:/etc/any-sync-node/
+      - ./storage/any-sync-node-3/:/storage/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+  any-sync-filenode:
+    image: "ghcr.io/anytypeio/any-sync-filenode:latest"
+    ports:
+      - 4434:443
+      - 8004:8000
+    volumes:
+      - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
+  any-sync-coordinator:
+    image: "ghcr.io/anytypeio/any-sync-coordinator:latest"
+    ports:
+      - 4435:443
+      - 8005:8000
+    volumes:
+      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]

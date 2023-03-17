@@ -1,0 +1,7 @@
+metric:
+    addr: 0.0.0.0:8000
+
+log:
+    defaultLevel: ''
+    namedLevels: {}
+    production: false
