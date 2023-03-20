@@ -11,7 +11,7 @@ services:
     volumes:
       - ./s3_root:/s3_root
   any-sync-node-1:
-    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     ports:
       - 4431:443
       - 8081:8080
@@ -25,7 +25,7 @@ services:
           memory: 500M
     command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
   any-sync-node-2:
-    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     ports:
       - 4432:443
       - 8082:8080
@@ -39,7 +39,7 @@ services:
           memory: 500M
     command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
   any-sync-node-3:
-    image: "ghcr.io/anytypeio/any-sync-node:latest"
+    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     ports:
       - 4433:443
       - 8083:8080
@@ -53,7 +53,7 @@ services:
           memory: 500M
     command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
   any-sync-filenode:
-    image: "ghcr.io/anytypeio/any-sync-filenode:latest"
+    image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     ports:
       - 4434:443
       - 8004:8000
@@ -66,7 +66,7 @@ services:
           memory: 500M
     command: ["/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
   any-sync-coordinator:
-    image: "ghcr.io/anytypeio/any-sync-coordinator:latest"
+    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     ports:
       - 4435:443
       - 8005:8000
