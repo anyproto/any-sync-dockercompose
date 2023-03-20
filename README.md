@@ -7,4 +7,5 @@
 ## usage
 * start stand: ```make start```
 * stop stand: ```make stop```
-* clean unused objects: ```make clean```
+* clean unused docker objects: ```make clean```
+* clean tmp files for any-sync-node and s3: ```cleanTmpFiles```
