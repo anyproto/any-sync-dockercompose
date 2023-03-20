@@ -4,6 +4,12 @@ services:
     image: mongo
     ports:
       - 27017:27017
+  s3-emulator:
+    image: stanislavt/s3-emulator
+    ports:
+      - 4569:4569
+    volumes:
+      - ./s3_root:/s3_root
   any-sync-node-1:
     image: "ghcr.io/anytypeio/any-sync-node:latest"
     ports:
@@ -53,6 +59,7 @@ services:
       - 8004:8000
     volumes:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
+      - ./.aws:/root/.aws:ro
     deploy:
       resources:
         limits:

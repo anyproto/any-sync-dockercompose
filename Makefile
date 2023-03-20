@@ -15,3 +15,6 @@ stop:
 
 clean:
 	docker system prune -a
+
+cleanTmpFiles:
+	rm -rf storage/ s3_root/
