@@ -5,3 +5,4 @@ log:
     defaultLevel: ''
     namedLevels: {}
     production: false
+networkStorePath: "/networkStore"

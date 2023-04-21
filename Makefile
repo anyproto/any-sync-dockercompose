@@ -1,20 +1,24 @@
 start:
 	install -d \
-		{etc,storage}/any-sync-node-{1..3}/ \
-		etc/any-sync-filenode/ \
-		etc/any-sync-coordinator/
-	cat etc/{nodes,common,node-1}.yml > etc/any-sync-node-1/config.yml
-	cat etc/{nodes,common,node-2}.yml > etc/any-sync-node-2/config.yml
-	cat etc/{nodes,common,node-3}.yml > etc/any-sync-node-3/config.yml
-	cat etc/{nodes,common,filenode}.yml > etc/any-sync-filenode/config.yml
-	cat etc/{nodes,common,coordinator}.yml > etc/any-sync-coordinator/config.yml
-	docker compose up -d
+		tmp/etc/any-sync-node-{1..3}/ \
+		tmp/etc/any-sync-filenode/ \
+		tmp/etc/any-sync-coordinator/
+	cat etc/{network,common,node-1}.yml > tmp/etc/any-sync-node-1/config.yml
+	cat etc/{network,common,node-2}.yml > tmp/etc/any-sync-node-2/config.yml
+	cat etc/{network,common,node-3}.yml > tmp/etc/any-sync-node-3/config.yml
+	cat etc/{network,common,filenode}.yml > tmp/etc/any-sync-filenode/config.yml
+	cat etc/{network,common,coordinator}.yml > tmp/etc/any-sync-coordinator/config.yml
+	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
+	docker compose up --force-recreate --build --detach
 
 stop:
 	docker-compose stop
 
 clean:
-	docker system prune -a
+	docker system prune --all
 
-cleanTmpFiles:
-	rm -rf storage/ s3_root/
+restart: stop start
+update: stop clean start
+
+cleanTmp:
+	rm -rf tmp/
