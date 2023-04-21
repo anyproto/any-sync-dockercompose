@@ -4,76 +4,109 @@ services:
     image: mongo
     ports:
       - 27017:27017
+    volumes:
+      - ./tmp/mongo/:/data/db
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./tmp/redis/:/data/
   s3-emulator:
     image: stanislavt/s3-emulator
     ports:
       - 4569:4569
     volumes:
-      - ./s3_root:/s3_root
+      - ./tmp/s3_root:/s3_root
+  any-sync-coordinator_bootstrap:
+    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
+    depends_on: [mongo]
+    restart: "no"
+    volumes:
+      - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+    entrypoint: [ "/bin/any-sync-confapply", "-c", "/etc/any-sync-coordinator/config.yml", "-n", "/etc/any-sync-coordinator/network.yml", "-e"]
+  any-sync-coordinator:
+    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
+    depends_on:
+      - mongo
+      - any-sync-coordinator_bootstrap
+    ports:
+      - 4435:443
+      - 8005:8000
+    volumes:
+      - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+      - ./tmp/networkStore/any-sync-coordinator/:/networkStore/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/bin/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]
+  any-sync-filenode:
+    image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
+    depends_on:
+      - redis
+      - s3-emulator
+      - any-sync-coordinator
+    ports:
+      - 4434:443
+      - 8004:8000
+    volumes:
+      - ./tmp/etc/any-sync-filenode/:/etc/any-sync-filenode/
+      - ./.aws:/root/.aws:ro
+      - ./tmp/networkStore/any-sync-filenode/:/networkStore/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: ["/bin/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
   any-sync-node-1:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    depends_on: [any-sync-coordinator]
     ports:
       - 4431:443
       - 8081:8080
       - 8001:8000
     volumes:
-      - ./etc/any-sync-node-1/:/etc/any-sync-node/
-      - ./storage/any-sync-node-1/:/storage/
+      - ./tmp/etc/any-sync-node-1/:/etc/any-sync-node/
+      - ./tmp/storage/any-sync-node-1/:/storage/
+      - ./tmp/networkStore/any-sync-node-1/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
-    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
   any-sync-node-2:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    depends_on: [any-sync-coordinator]
     ports:
       - 4432:443
       - 8082:8080
       - 8002:8000
     volumes:
-      - ./etc/any-sync-node-2/:/etc/any-sync-node/
-      - ./storage/any-sync-node-2/:/storage/
+      - ./tmp/etc/any-sync-node-2/:/etc/any-sync-node/
+      - ./tmp/storage/any-sync-node-2/:/storage/
+      - ./tmp/networkStore/any-sync-node-2/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
-    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
   any-sync-node-3:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    depends_on: [any-sync-coordinator]
     ports:
       - 4433:443
       - 8083:8080
       - 8003:8000
     volumes:
-      - ./etc/any-sync-node-3/:/etc/any-sync-node/
-      - ./storage/any-sync-node-3/:/storage/
+      - ./tmp/etc/any-sync-node-3/:/etc/any-sync-node/
+      - ./tmp/storage/any-sync-node-3/:/storage/
+      - ./tmp/networkStore/any-sync-node-3/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
-    command: ["/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
-  any-sync-filenode:
-    image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
-    ports:
-      - 4434:443
-      - 8004:8000
-    volumes:
-      - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
-      - ./.aws:/root/.aws:ro
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    command: ["/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
-  any-sync-coordinator:
-    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
-    ports:
-      - 4435:443
-      - 8005:8000
-    volumes:
-      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    command: ["/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]
+    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
