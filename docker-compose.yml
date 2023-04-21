@@ -43,7 +43,8 @@ services:
       resources:
         limits:
           memory: 500M
-    command: ["/bin/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]
+    #command: ["/bin/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]
+    command: bash -c "sleep 5; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
   any-sync-filenode:
     image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
@@ -61,7 +62,8 @@ services:
       resources:
         limits:
           memory: 500M
-    command: ["/bin/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
+    #command: ["/bin/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
+    command: bash -c "sleep 10; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
   any-sync-node-1:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -77,7 +79,8 @@ services:
       resources:
         limits:
           memory: 500M
-    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-2:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -93,7 +96,8 @@ services:
       resources:
         limits:
           memory: 500M
-    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-3:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -109,4 +113,5 @@ services:
       resources:
         limits:
           memory: 500M
-    command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
+    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
