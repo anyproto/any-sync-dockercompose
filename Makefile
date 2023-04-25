@@ -1,4 +1,7 @@
-start:
+start: generate_etc
+	docker compose up --force-recreate --build --detach
+
+generate_etc:
 	install -d \
 		tmp/etc/any-sync-node-{1..3}/ \
 		tmp/etc/any-sync-filenode/ \
@@ -9,7 +12,6 @@ start:
 	cat etc/{network,common,filenode}.yml > tmp/etc/any-sync-filenode/config.yml
 	cat etc/{network,common,coordinator}.yml > tmp/etc/any-sync-coordinator/config.yml
 	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
-	docker compose up --force-recreate --build --detach
 
 stop:
 	docker-compose stop
