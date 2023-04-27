@@ -6,6 +6,7 @@
   ```
   echo <you token>| docker login ghcr.io -u <github username> --password-stdin
   ```
+* installing docker and docker compose https://docs.docker.com/compose/install/linux/
 
 ## usage
 * start stand:
