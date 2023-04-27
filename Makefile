@@ -16,7 +16,7 @@ generate_etc:
 	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
 
 stop:
-	docker-compose stop
+	docker compose stop
 
 clean:
 	docker system prune --all
