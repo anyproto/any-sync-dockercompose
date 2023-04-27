@@ -1,7 +1,11 @@
 # test stand in docker-compose
 
 ## prepare
-* Creating a personal access token - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+* Creating a personal access token, instruction:
+  * go to https://github.com/settings/tokens/
+  * push "generate new token (classic)"
+    minimal permissions "read:packages"
+
 * login in ghcr.io:
   ```
   echo <you token>| docker login ghcr.io -u <github username> --password-stdin
