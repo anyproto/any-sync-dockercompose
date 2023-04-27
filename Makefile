@@ -1,5 +1,7 @@
+SHELL=/bin/bash
+
 start: generate_etc
-	docker compose up --force-recreate --build --detach
+	docker compose up --build --detach
 
 generate_etc:
 	install -d \
