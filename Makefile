@@ -1,7 +1,5 @@
+.DEFAULT_GOAL := start
 SHELL=/bin/bash
-
-start: generate_etc
-	docker compose up --force-recreate --build --detach
 
 generate_etc:
 	install -d \
@@ -14,6 +12,9 @@ generate_etc:
 	cat etc/{network,common,filenode}.yml > tmp/etc/any-sync-filenode/config.yml
 	cat etc/{network,common,coordinator}.yml > tmp/etc/any-sync-coordinator/config.yml
 	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
+
+start: generate_etc
+	docker compose up --force-recreate --build --detach
 
 stop:
 	docker compose stop
