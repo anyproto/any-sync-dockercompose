@@ -2,6 +2,10 @@
 SHELL=/bin/bash
 
 generate_etc:
+	$(eval store="s3_store")
+ifeq ($(INTEGRATION), true)
+	$(eval store="s3_store_dev")
+endif
 	install -d \
 		tmp/etc/any-sync-node-{1..3}/ \
 		tmp/etc/any-sync-filenode/ \
@@ -9,7 +13,7 @@ generate_etc:
 	cat etc/{network,common,node-1}.yml > tmp/etc/any-sync-node-1/config.yml
 	cat etc/{network,common,node-2}.yml > tmp/etc/any-sync-node-2/config.yml
 	cat etc/{network,common,node-3}.yml > tmp/etc/any-sync-node-3/config.yml
-	cat etc/{network,common,filenode}.yml > tmp/etc/any-sync-filenode/config.yml
+	cat etc/{network,common,filenode,$(store)}.yml > tmp/etc/any-sync-filenode/config.yml
 	cat etc/{network,common,coordinator}.yml > tmp/etc/any-sync-coordinator/config.yml
 	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
 
@@ -24,6 +28,9 @@ clean:
 
 pull:
 	docker compose pull
+
+down:
+	docker compose down
 
 restart: stop start
 update: stop pull start
