@@ -1,5 +1,0 @@
-s3Store:
-    bucket: anytype-dev-filenode
-    maxThreads: 16
-    profile: default
-    region: eu-central-1
