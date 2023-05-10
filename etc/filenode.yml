@@ -4,10 +4,11 @@ account:
     signingKey: kTZYumPO7MoEsU7ZyeNTLFgYaO3rGFEHk2qXJdqnV9O0DhMk/wdbgkwrbqtIpVH4Bkx7LPEHesTg3DfH4G524g==
 
 s3Store:
-    bucket: anytype-dev-filenode
+    bucket: s3-emulator:4569
     maxThreads: 16
     profile: default
     region: eu-central-1
+    endpoint: http://s3-emulator:4569
 
 redis:
     isCluster: false

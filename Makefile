@@ -25,6 +25,9 @@ clean:
 pull:
 	docker compose pull
 
+down:
+	docker compose down
+
 restart: stop start
 update: stop pull start
 upgrade: stop clean start
