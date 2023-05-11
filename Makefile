@@ -14,7 +14,7 @@ generate_etc:
 	cat etc/network.yml | grep -v '^network:' > tmp/etc/any-sync-coordinator/network.yml
 
 start: generate_etc
-	docker compose up --force-recreate --build --remove-orphans --detach
+	docker compose up --force-recreate --build --remove-orphans --detach --pull always
 
 stop:
 	docker compose stop

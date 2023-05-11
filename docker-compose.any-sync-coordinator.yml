@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  any-sync-coordinator:
+    image: localbuild-coordinator
+    build:
+      context: .
+      dockerfile: Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-coordinator/
