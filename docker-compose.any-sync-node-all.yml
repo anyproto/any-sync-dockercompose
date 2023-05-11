@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  any-sync-node-1:
+    image: localbuild-node
+    build:
+      context: .
+      dockerfile: Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-node/
+  any-sync-node-2:
+    image: localbuild-node
+    build:
+      context: .
+      dockerfile: Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-node/
+  any-sync-node-3:
+    image: localbuild-node
+    build:
+      context: .
+      dockerfile: Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-node/

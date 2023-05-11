@@ -56,3 +56,17 @@ use file .env
 * any-sync-coordinator v0.0.10
 * any-sync-filenode v0.1.5
 * any-sync-node v0.0.31
+
+## usage "local build" images
+* clone repos
+  ```
+  install -d repos && for REPO in any-sync-{node,filenode,coordinator}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anytypeio/${REPO}.git repos/$REPO; fi; done
+  ```
+* create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
+  ```
+  ln -F -s docker-compose.any-sync-node-1.yml docker-compose.override.yml
+  ```
+* restart docker compose
+  ```
+  make restart
+  ```
