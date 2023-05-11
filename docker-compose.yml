@@ -10,7 +10,7 @@ services:
     container_name: redis
     image: redis:latest
     restart: always
-    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
     ports:
       - "6379:6379"
     volumes:
@@ -27,7 +27,7 @@ services:
     restart: "no"
     volumes:
       - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-    entrypoint: [ "/bin/any-sync-confapply", "-c", "/etc/any-sync-coordinator/config.yml", "-n", "/etc/any-sync-coordinator/network.yml", "-e"]
+    command: /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e
   any-sync-coordinator:
     image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
@@ -43,7 +43,6 @@ services:
       resources:
         limits:
           memory: 500M
-    #command: ["/bin/any-sync-coordinator", "-c", "/etc/any-sync-coordinator/config.yml"]
     command: bash -c "sleep 5; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
   any-sync-filenode:
     image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
@@ -62,7 +61,6 @@ services:
       resources:
         limits:
           memory: 500M
-    #command: ["/bin/any-sync-filenode", "-c", "/etc/any-sync-filenode/config.yml"]
     command: bash -c "sleep 10; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
   any-sync-node-1:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -79,7 +77,6 @@ services:
       resources:
         limits:
           memory: 500M
-    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
     command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-2:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -96,7 +93,6 @@ services:
       resources:
         limits:
           memory: 500M
-    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
     command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-3:
     image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -113,5 +109,4 @@ services:
       resources:
         limits:
           memory: 500M
-    #command: ["/bin/any-sync-node", "-c", "/etc/any-sync-node/config.yml"]
     command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
