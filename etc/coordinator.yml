@@ -16,3 +16,6 @@ grpcServer:
     stream:
         maxMsgSizeMb: 256
         timeoutMilliseconds: 1000
+spaceStatus:
+    runSeconds: 5
+    deletionPeriodDays: 0
