@@ -28,6 +28,10 @@ pull:
 down:
 	docker compose down
 
+# build with "plain" log for debug
+build:
+	docker compose build --no-cache --progress plain
+
 restart: stop start
 update: stop pull start
 upgrade: stop clean start

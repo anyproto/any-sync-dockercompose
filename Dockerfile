@@ -17,6 +17,6 @@ RUN --mount=type=ssh go mod download
 COPY ${REPO_DIR} .
 
 # build
-RUN --mount=type=ssh make deps
-RUN --mount=type=ssh make build
+RUN --mount=type=ssh make deps CGO_ENABLED=0
+RUN --mount=type=ssh make build CGO_ENABLED=0
 RUN rsync -a bin/ /bin/
