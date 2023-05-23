@@ -60,7 +60,7 @@ use file .env
 ## usage "local build" images
 * clone repos
   ```
-  install -d repos && for REPO in any-sync-{node,filenode,coordinator}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anytypeio/${REPO}.git repos/$REPO; fi; done
+  install -d repos && for REPO in any-sync-{node,filenode,coordinator}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
   ```
 * create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
   ```
