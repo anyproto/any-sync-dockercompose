@@ -22,14 +22,14 @@ services:
     volumes:
       - ./tmp/s3_root:/s3_root
   any-sync-coordinator_bootstrap:
-    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on: [mongo]
     restart: "no"
     volumes:
       - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
     command: /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e
   any-sync-coordinator:
-    image: "ghcr.io/anytypeio/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       - mongo
       - any-sync-coordinator_bootstrap
@@ -45,7 +45,7 @@ services:
           memory: 500M
     command: bash -c "sleep 5; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
   any-sync-filenode:
-    image: "ghcr.io/anytypeio/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
       - redis
       - s3-emulator
@@ -63,7 +63,7 @@ services:
           memory: 500M
     command: bash -c "sleep 10; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
   any-sync-node-1:
-    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
     ports:
       - 4431:443
@@ -79,7 +79,7 @@ services:
           memory: 500M
     command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-2:
-    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
     ports:
       - 4432:443
@@ -95,7 +95,7 @@ services:
           memory: 500M
     command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-3:
-    image: "ghcr.io/anytypeio/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
     ports:
       - 4433:443
