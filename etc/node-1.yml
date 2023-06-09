@@ -4,27 +4,26 @@ account:
     signingKey: /UxND22fiH7QgOaMee30x9ZHLFDMY8wWIqWSqOWCvtBEB/dbsFViVokAalOqgRT23hcZLGB8gkLinOc3+u996g==
 
 apiServer:
-    server:
-        listenAddrs:
-            - 0.0.0.0:8080
-    stream:
-        maxMsgSizeMb: 256
-        timeoutMilliseconds: 1000
+    listenAddr: 0.0.0.0:8080
+
+drpc:
+  stream:
+    timeoutMilliseconds: 1000
+    maxMsgSizeMb: 256
+
+yamux:
+    listenAddrs:
+        - any-sync-node-1:443
+    writeTimeoutSec: 10
+    dialTimeoutSec: 10
 
 space:
     gcTTL: 60
     syncPeriod: 600
+
 storage:
     path: /storage
 
 nodeSync:
     periodicSyncHours: 2
     syncOnStart: true
-
-grpcServer:
-    server:
-        listenAddrs:
-            - any-sync-node-1:443
-    stream:
-        maxMsgSizeMb: 256
-        timeoutMilliseconds: 1000

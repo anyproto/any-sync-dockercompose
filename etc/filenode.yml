@@ -14,10 +14,14 @@ redis:
     isCluster: false
     url: redis://redis:6379?dial_timeout=3&read_timeout=6s
 
-grpcServer:
-    server:
-        listenAddrs:
-            - any-sync-filenode:443
-    stream:
-        maxMsgSizeMb: 256
-        timeoutMilliseconds: 1000
+drpc:
+  stream:
+    timeoutMilliseconds: 1000
+    maxMsgSizeMb: 256
+
+yamux:
+    listenAddrs:
+        - any-sync-filenode:443
+    writeTimeoutSec: 10
+    dialTimeoutSec: 10
+
