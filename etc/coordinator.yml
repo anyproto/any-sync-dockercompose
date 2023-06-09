@@ -1,3 +1,4 @@
+
 account:
     peerId: 12D3KooWPUMFQFeiyZDwS2aGZJfcYZamwq3NLQJT6RskEzPfP2Xd
     peerKey: dQ+IwS15rKyNfjeUdgmg1AFhvl69JzkI/FpkYnfl9ITK4vX8BsI+O9xyxPhQfJbsgixRJLIQ6fKceXL6GRiTZA==
@@ -9,13 +10,18 @@ mongo:
     log: log
     spaces: spaces
 
-grpcServer:
-    server:
-        listenAddrs:
-            - any-sync-coordinator:443
-    stream:
-        maxMsgSizeMb: 256
-        timeoutMilliseconds: 1000
 spaceStatus:
     runSeconds: 5
     deletionPeriodDays: 0
+
+drpc:
+  stream:
+    timeoutMilliseconds: 1000
+    maxMsgSizeMb: 256
+
+yamux:
+    listenAddrs:
+        - any-sync-coordinator:443
+    writeTimeoutSec: 10
+    dialTimeoutSec: 10
+
