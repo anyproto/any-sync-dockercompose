@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  any-sync-consensusnode:
+    image: localbuild-consensusnode
+    build:
+      context: .
+      dockerfile: Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-consensusnode/

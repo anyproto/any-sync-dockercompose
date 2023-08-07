@@ -16,3 +16,6 @@ network:
         - peerId: 12D3KooWMwE15iEG51Sewt2zYqwgbrBz6QMuFVdWLBMes1SADtCh
           addresses: [ "any-sync-filenode:443" ]
           types: [file]
+        - peerId: 12D3KooWNT4hbNKXeFuDtdQ13ZbhQ1oJJ2AVWgAQVRrCj6Zb5wxk
+          addresses: [ "any-sync-consensusnode:443" ]
+          types: [consensus]
