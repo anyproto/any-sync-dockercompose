@@ -5,7 +5,7 @@ account:
     signingKey: 0ojibPdVZUL9hJmaQHpRBJYjH0Y0MuoLL+Lc2hFchorGS26RaLuUVs36ikGDDRi39BlzafEDNomB+IrBt8HCdA==
 
 mongo:
-    connect: mongodb://mongo:27017
+    connect: mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/
     database: coordinator
     log: log
     spaces: spaces

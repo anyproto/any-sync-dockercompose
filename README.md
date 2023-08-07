@@ -50,17 +50,24 @@
   docker compose exec any-sync-coordinator bash
   ```
 
+* get current network config
+  ```
+  docker compose exec mongo mongosh coordinator
+  db.nodeConf.find().sort( { _id: -1 } ).limit(1)
+  ```
+
 ## set specific versions
 use file .env
 ### minimal versions
 * any-sync-coordinator v0.0.10
 * any-sync-filenode v0.1.5
 * any-sync-node v0.0.31
+* any-sync-consensusnode v0.0.4
 
 ## usage "local build" images
 * clone repos
   ```
-  install -d repos && for REPO in any-sync-{node,filenode,coordinator}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
+  install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
   ```
 * create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
   ```

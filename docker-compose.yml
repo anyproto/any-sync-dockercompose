@@ -1,11 +1,30 @@
 version: "3.9"
 services:
-  mongo:
+  mongo-1:
     image: mongo
+    command: --replSet rs0
     ports:
-      - 27017:27017
+      - 27010:27017
     volumes:
-      - ./tmp/mongo/:/data/db
+      - ./tmp/mongo-1/:/data/db
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:27017\"},{_id:1,host:\"mongo-2:27017\"},{_id:2,host:\"mongo-3:27017\"}]}).ok || rs.status().ok" | mongosh --port 27017 --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+  mongo-2:
+    image: mongo
+    command: --replSet rs0
+    ports:
+      - 27011:27017
+    volumes:
+      - ./tmp/mongo-2/:/data/db
+  mongo-3:
+    image: mongo
+    command: --replSet rs0
+    ports:
+      - 27012:27017
+    volumes:
+      - ./tmp/mongo-3/:/data/db
   redis:
     container_name: redis
     image: redis:latest
@@ -23,15 +42,15 @@ services:
       - ./tmp/s3_root:/s3_root
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
-    depends_on: [mongo]
+    depends_on: [mongo-1]
     restart: "no"
     volumes:
       - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-    command: /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e
+    command: bash -c "sleep 10; /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
   any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      - mongo
+      - mongo-1
       - any-sync-coordinator_bootstrap
     ports:
       - 4435:443
@@ -43,7 +62,7 @@ services:
       resources:
         limits:
           memory: 500M
-    command: bash -c "sleep 5; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
+    command: bash -c "sleep 10; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
   any-sync-filenode:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
@@ -61,7 +80,7 @@ services:
       resources:
         limits:
           memory: 500M
-    command: bash -c "sleep 10; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
+    command: bash -c "sleep 15; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -77,7 +96,7 @@ services:
       resources:
         limits:
           memory: 500M
-    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -93,7 +112,7 @@ services:
       resources:
         limits:
           memory: 500M
-    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on: [any-sync-coordinator]
@@ -109,4 +128,18 @@ services:
       resources:
         limits:
           memory: 500M
-    command: bash -c "sleep 10; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+  any-sync-consensusnode:
+    image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
+    depends_on: [any-sync-coordinator]
+    ports:
+      - 4436:443
+      - 8006:8000
+    volumes:
+      - ./tmp/etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
+      - ./tmp/networkStore/any-sync-consensusnode/:/networkStore/
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    command: bash -c "sleep 15; /bin/any-sync-consensusnode -c /etc/any-sync-consensusnode/config.yml"
