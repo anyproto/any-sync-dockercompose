@@ -6,7 +6,7 @@ RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 RUN git config --global url.ssh://git@github.com/.insteadOf https://github.com/
 # }}
 
-RUN apt-get install -y yq
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
 
 WORKDIR /generateconfig
 COPY .env /.env

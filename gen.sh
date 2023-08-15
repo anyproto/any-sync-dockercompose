@@ -5,8 +5,8 @@ source /.env
 # generate networkId
 if ! [[ -s .networkId ]]; then
     anyconf create-network
-    yq -r .networkId nodes.yml > .networkId
-    yq -r .account.signingKey account.yml > .networkSigningKey
+    cat nodes.yml | grep '^networkId:' | awk '{print $NF}' > .networkId
+    cat account.yml | yq '.account.signingKey' > .networkSigningKey
 fi
 NETWORK_ID=$( cat .networkId)
 NETWORK_SIGNING_KEY=$( cat .networkSigningKey )
@@ -28,6 +28,6 @@ if ! [[ -s account0.yml ]]; then
 
 fi
 
-yq -yi ".networkId |= \"${NETWORK_ID}\"" nodes.yml
-yq -yi ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account3.yml
-yq -yi ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account5.yml
+yq --indent 4 --inplace ".networkId |= \"${NETWORK_ID}\"" nodes.yml
+yq --indent 4 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account3.yml
+yq --indent 4 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account5.yml
