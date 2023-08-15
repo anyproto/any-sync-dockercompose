@@ -2,7 +2,7 @@
 self-host for any-sync  
 intended for review and testing  
 > [!IMPORTANT]
-> ** please don't use it for production!**
+> please don't use it for production!
 
 ## prepare
 * Creating a personal access token, instruction:
