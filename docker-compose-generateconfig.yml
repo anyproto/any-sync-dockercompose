@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  generateconfig:
+    image: generateconfig
+    build:
+      context: .
+      dockerfile: Dockerfile-generateconfig
+      ssh:
+        - default
+    volumes:
+      - ./tmp/generateconfig/:/generateconfig/
+    command: /gen.sh

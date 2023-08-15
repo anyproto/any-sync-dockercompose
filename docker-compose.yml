@@ -2,27 +2,27 @@ version: "3.9"
 services:
   mongo-1:
     image: mongo
-    command: --replSet rs0
+    command: --replSet rs0 --port ${MONGO_1_PORT}
     ports:
-      - 27010:27017
+      - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
       - ./tmp/mongo-1/:/data/db
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:27017\"},{_id:1,host:\"mongo-2:27017\"},{_id:2,host:\"mongo-3:27017\"}]}).ok || rs.status().ok" | mongosh --port 27017 --quiet) -eq 1
+      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
   mongo-2:
     image: mongo
-    command: --replSet rs0
+    command: --replSet rs0 --port ${MONGO_2_PORT}
     ports:
-      - 27011:27017
+      - "${MONGO_2_PORT}:${MONGO_2_PORT}"
     volumes:
       - ./tmp/mongo-2/:/data/db
   mongo-3:
     image: mongo
-    command: --replSet rs0
+    command: --replSet rs0 --port ${MONGO_3_PORT}
     ports:
-      - 27012:27017
+      - "${MONGO_3_PORT}:${MONGO_3_PORT}"
     volumes:
       - ./tmp/mongo-3/:/data/db
   redis:
@@ -31,13 +31,13 @@ services:
     restart: always
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ./tmp/redis/:/data/
   s3-emulator:
     image: stanislavt/s3-emulator
     ports:
-      - 4569:4569
+      - "${AWS_PORT}:${AWS_PORT}"
     volumes:
       - ./tmp/s3_root:/s3_root
   any-sync-coordinator_bootstrap:
@@ -53,7 +53,7 @@ services:
       - mongo-1
       - any-sync-coordinator_bootstrap
     ports:
-      - 4435:443
+      - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
       - 8005:8000
     volumes:
       - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
@@ -70,7 +70,7 @@ services:
       - s3-emulator
       - any-sync-coordinator
     ports:
-      - 4434:443
+      - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
       - 8004:8000
     volumes:
       - ./tmp/etc/any-sync-filenode/:/etc/any-sync-filenode/
@@ -83,9 +83,10 @@ services:
     command: bash -c "sleep 15; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on: [any-sync-coordinator]
+    depends_on:
+      - any-sync-coordinator
     ports:
-      - 4431:443
+      - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
       - 8081:8080
       - 8001:8000
     volumes:
@@ -99,9 +100,10 @@ services:
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on: [any-sync-coordinator]
+    depends_on:
+      - any-sync-coordinator
     ports:
-      - 4432:443
+      - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
       - 8082:8080
       - 8002:8000
     volumes:
@@ -115,9 +117,10 @@ services:
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on: [any-sync-coordinator]
+    depends_on:
+      - any-sync-coordinator
     ports:
-      - 4433:443
+      - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
       - 8083:8080
       - 8003:8000
     volumes:
@@ -131,9 +134,10 @@ services:
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
-    depends_on: [any-sync-coordinator]
+    depends_on:
+      - any-sync-coordinator
     ports:
-      - 4436:443
+      - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
       - 8006:8000
     volumes:
       - ./tmp/etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
