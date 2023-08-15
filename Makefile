@@ -3,16 +3,16 @@ SHELL := /bin/bash
 include .env
 
 generate_etc:
-	docker compose --file docker-compose-generateconfig.yml up --build --remove-orphans --detach
-	sleep 1
-	id
-	ls -ald ./
-	ls -al ./
 	install -d \
 		tmp/etc/any-sync-node-{1..3}/ \
 		tmp/etc/any-sync-filenode/ \
 		tmp/etc/any-sync-coordinator/ \
 		tmp/etc/any-sync-consensusnode/
+	docker compose --file docker-compose-generateconfig.yml up --build --remove-orphans --detach
+	sleep 1
+	id
+	ls -ald ./
+	ls -al ./
 	sed 's|^|    |; 1s|^|network:\n|' tmp/generateconfig/nodes.yml > tmp/etc/network.yml
 	cat tmp/etc/network.yml etc/common.yml tmp/generateconfig/account0.yml etc/node-1.yml > tmp/etc/any-sync-node-1/config.yml
 	cat tmp/etc/network.yml etc/common.yml tmp/generateconfig/account1.yml etc/node-2.yml > tmp/etc/any-sync-node-2/config.yml
