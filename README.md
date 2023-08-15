@@ -5,7 +5,7 @@ intended for review and testing
 > please don't use it for production!
 
 ## prepare
-* Creating a personal access token, instruction:
+* Creation of personal access token, instruction:
   * go to https://github.com/settings/tokens/
   * push "generate new token (classic)"
     minimal permissions "read:packages"
@@ -63,19 +63,19 @@ intended for review and testing
 ## set specific versions
 use file .env
 ### compatible versions
-you cat find compatible versions on this pages:  
-* stable versions, used on production - https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/
-* unstable versions, used on test stand - https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/
+you can find compatible versions on this pages:  
+* stable versions, used in production - https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/
+* unstable versions, used in test stand - https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/
 
 ## usage "local build" images
 if you need to make local build binaries for any-sync-*  
-you can doing it by using "overrides" functional in docker-compose
+you can do it by using "overrides" functional in docker-compose
 
 * clone repos
   ```
   install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
   ```
-* create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
+* to create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
   ```
   ln -F -s docker-compose.any-sync-node-1.yml docker-compose.override.yml
   ```
