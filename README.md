@@ -1,4 +1,8 @@
-# test stand in docker-compose
+# test stand (self-host) in docker-compose
+self-host for any-sync  
+intended for review and testing  
+[!IMPORTANT]
+** please don't use it for production!**
 
 ## prepare
 * Creating a personal access token, instruction:
@@ -45,26 +49,28 @@
   ```
 * attach to vm:
   ```
-  docker compose exec mongo bash
+  docker compose exec mongo-1 bash
   docker compose exec any-type-node-1 bash
   docker compose exec any-sync-coordinator bash
   ```
 
 * get current network config
   ```
-  docker compose exec mongo mongosh coordinator
+  docker compose exec mongo-1 mongosh coordinator
   db.nodeConf.find().sort( { _id: -1 } ).limit(1)
   ```
 
 ## set specific versions
 use file .env
-### minimal versions
-* any-sync-coordinator v0.0.10
-* any-sync-filenode v0.1.5
-* any-sync-node v0.0.31
-* any-sync-consensusnode v0.0.4
+### compatible versions
+you cat find compatible versions on this pages:  
+* stable versions, used on production - https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/
+* unstable versions, used on test stand - https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/
 
 ## usage "local build" images
+if you need to make local build binaries for any-sync-*  
+you can doing it by using "overrides" functional in docker-compose
+
 * clone repos
   ```
   install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
