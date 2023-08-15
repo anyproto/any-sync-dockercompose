@@ -1,8 +1,8 @@
 # test stand (self-host) in docker-compose
 self-host for any-sync  
 intended for review and testing  
-[!IMPORTANT]
-** please don't use it for production!**
+> [!IMPORTANT]
+> ** please don't use it for production!**
 
 ## prepare
 * Creating a personal access token, instruction:
