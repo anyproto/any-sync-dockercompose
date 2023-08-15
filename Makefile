@@ -5,6 +5,9 @@ include .env
 generate_etc:
 	docker compose --file docker-compose-generateconfig.yml up --build --remove-orphans --detach
 	sleep 1
+	id
+	ls -ald ./
+	ls -al ./
 	install -d \
 		tmp/etc/any-sync-node-{1..3}/ \
 		tmp/etc/any-sync-filenode/ \
