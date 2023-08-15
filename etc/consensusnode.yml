@@ -1,11 +1,5 @@
-
-account:
-    peerId: 12D3KooWNT4hbNKXeFuDtdQ13ZbhQ1oJJ2AVWgAQVRrCj6Zb5wxk
-    peerKey: 5Btn70kUmMokNhSDhu3GzuFcbLxK9aRnoyb/zPWkLvu7svtWJZxQDJ5AWYZ4TxGhgb/GbZB1nPjp7Kz+V+J4OQ==
-    signingKey: 0ojibPdVZUL9hJmaQHpRBJYjH0Y0MuoLL+Lc2hFchorGS26RaLuUVs36ikGDDRi39BlzafEDNomB+IrBt8HCdA==
-
 mongo:
-    connect: mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/?w=majority
+    connect: %MONGO_CONNECT%/?w=majority
     database: consensus
     log: log
 
@@ -16,7 +10,7 @@ drpc:
 
 yamux:
     listenAddrs:
-        - any-sync-consensusnode:443
+        - %ANY_SYNC_CONSENSUSNODE_ADDRESSES%
     writeTimeoutSec: 10
     dialTimeoutSec: 10
 

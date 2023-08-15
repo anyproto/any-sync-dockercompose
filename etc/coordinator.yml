@@ -1,11 +1,5 @@
-
-account:
-    peerId: 12D3KooWPUMFQFeiyZDwS2aGZJfcYZamwq3NLQJT6RskEzPfP2Xd
-    peerKey: dQ+IwS15rKyNfjeUdgmg1AFhvl69JzkI/FpkYnfl9ITK4vX8BsI+O9xyxPhQfJbsgixRJLIQ6fKceXL6GRiTZA==
-    signingKey: 0ojibPdVZUL9hJmaQHpRBJYjH0Y0MuoLL+Lc2hFchorGS26RaLuUVs36ikGDDRi39BlzafEDNomB+IrBt8HCdA==
-
 mongo:
-    connect: mongodb://mongo-1:27017,mongo-2:27017,mongo-3:27017/
+    connect: %MONGO_CONNECT%
     database: coordinator
     log: log
     spaces: spaces
@@ -21,7 +15,7 @@ drpc:
 
 yamux:
     listenAddrs:
-        - any-sync-coordinator:443
+        - %ANY_SYNC_COORDINATOR_ADDRESSES%
     writeTimeoutSec: 10
     dialTimeoutSec: 10
 

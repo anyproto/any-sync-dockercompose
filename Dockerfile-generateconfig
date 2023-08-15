@@ -1,0 +1,16 @@
+FROM golang:1.19
+
+# git+ssh {{
+RUN apt-get update && apt-get install -y ca-certificates git-core ssh rsync
+RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+RUN git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+# }}
+
+RUN apt-get install -y yq
+
+WORKDIR /generateconfig
+COPY .env /.env
+COPY gen.sh /gen.sh
+
+ENV GOPRIVATE="github.com/anyproto"
+RUN --mount=type=ssh go install github.com/anyproto/any-sync-tools/anyconf@latest

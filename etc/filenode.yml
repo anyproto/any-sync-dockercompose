@@ -1,18 +1,13 @@
-account:
-    peerId: 12D3KooWMwE15iEG51Sewt2zYqwgbrBz6QMuFVdWLBMes1SADtCh
-    peerKey: kTZYumPO7MoEsU7ZyeNTLFgYaO3rGFEHk2qXJdqnV9O0DhMk/wdbgkwrbqtIpVH4Bkx7LPEHesTg3DfH4G524g==
-    signingKey: kTZYumPO7MoEsU7ZyeNTLFgYaO3rGFEHk2qXJdqnV9O0DhMk/wdbgkwrbqtIpVH4Bkx7LPEHesTg3DfH4G524g==
-
 s3Store:
-    bucket: s3-emulator:4569
+    bucket: s3-emulator:%AWS_PORT%
     maxThreads: 16
     profile: default
     region: eu-central-1
-    endpoint: http://s3-emulator:4569
+    endpoint: http://s3-emulator:%AWS_PORT%
 
 redis:
     isCluster: false
-    url: redis://redis:6379?dial_timeout=3&read_timeout=6s
+    url: %REDIS_URL%
 
 drpc:
   stream:
@@ -21,7 +16,7 @@ drpc:
 
 yamux:
     listenAddrs:
-        - any-sync-filenode:443
+        - %ANY_SYNC_FILENODE_ADDRESSES%
     writeTimeoutSec: 10
     dialTimeoutSec: 10
 
