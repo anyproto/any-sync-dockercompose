@@ -9,6 +9,7 @@ generate_etc:
 		tmp/etc/any-sync-coordinator/ \
 		tmp/etc/any-sync-consensusnode/
 	docker compose --file docker-compose-generateconfig.yml up --build --remove-orphans --detach
+	sleep 2
 	sed 's|^|    |; 1s|^|network:\n|' tmp/generateconfig/nodes.yml > tmp/etc/network.yml
 	cat tmp/etc/network.yml etc/common.yml tmp/generateconfig/account0.yml etc/node-1.yml > tmp/etc/any-sync-node-1/config.yml
 	cat tmp/etc/network.yml etc/common.yml tmp/generateconfig/account1.yml etc/node-2.yml > tmp/etc/any-sync-node-2/config.yml
