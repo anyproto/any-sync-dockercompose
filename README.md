@@ -1,11 +1,10 @@
-# test stand (self-host) in docker-compose
-self-host for any-sync  
-intended for review and testing  
+# Docker-compose for any-sync
+Self-host for any-sync, designed for review and testing purposes.
 > [!IMPORTANT]
 > please don't use it for production!
 
-## prepare
-* Creation of personal access token, instruction:
+## Prepare
+* Create a personal access token:
   * go to https://github.com/settings/tokens/
   * push "generate new token (classic)"
     minimal permissions "read:packages"
@@ -14,7 +13,7 @@ intended for review and testing
   ```
   echo <you token>| docker login ghcr.io -u <github username> --password-stdin
   ```
-* installing docker and docker compose https://docs.docker.com/compose/install/linux/
+* install docker and docker compose https://docs.docker.com/compose/install/linux/
 
 ## usage
 * start stand:
@@ -60,22 +59,21 @@ intended for review and testing
   db.nodeConf.find().sort( { _id: -1 } ).limit(1)
   ```
 
-## set specific versions
-use file .env
-### compatible versions
-you can find compatible versions on this pages:  
+## Set specific versions
+Use file .env
+### Compatible versions
+You can find compatible versions on this pages:  
 * stable versions, used in production - https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/
 * unstable versions, used in test stand - https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/
 
-## usage "local build" images
-if you need to make local build binaries for any-sync-*  
-you can do it by using "overrides" functional in docker-compose
+## "local build" images usage
+If you need to create local build binaries for any-sync-*, you can do so by using the "overrides" functionality in docker-compose.
 
 * clone repos
   ```
   install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
   ```
-* to create a symlink to the "override file" you need (or you can create docker-compose.override.yml by your self)
+* to create a symlink for the "override file," you can either create it yourself as docker-compose.override.yml or use an existing one
   ```
   ln -F -s docker-compose.any-sync-node-1.yml docker-compose.override.yml
   ```
@@ -83,3 +81,19 @@ you can do it by using "overrides" functional in docker-compose
   ```
   make restart
   ```
+
+## Contribution
+Thank you for your desire to develop Anytype together!
+
+❤️ This project and everyone involved in it is governed by the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
+
+🧑‍💻 Check out our [contributing guide](https://github.com/anyproto/.github/blob/main/docs/CONTRIBUTING.md) to learn about asking questions, creating issues, or submitting pull requests.
+
+🫢 For security findings, please email [security@anytype.io](mailto:security@anytype.io) and refer to our [security guide](https://github.com/anyproto/.github/blob/main/docs/SECURITY.md) for more information.
+
+🤝 Follow us on [Github](https://github.com/anyproto) and join the [Contributors Community](https://github.com/orgs/anyproto/discussions).
+
+---
+Made by Any — a Swiss association 🇨🇭
+
+Licensed under [MIT](./LICENSE.md).
