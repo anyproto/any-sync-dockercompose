@@ -49,7 +49,7 @@ Self-host for any-sync, designed for review and testing purposes.
 * attach to vm:
   ```
   docker compose exec mongo-1 bash
-  docker compose exec any-type-node-1 bash
+  docker compose exec any-sync-node-1 bash
   docker compose exec any-sync-coordinator bash
   ```
 
