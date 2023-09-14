@@ -53,9 +53,9 @@ Self-host for any-sync, designed for review and testing purposes.
 ## Set specific versions
 Use file .env
 ### Compatible versions
-You can find compatible versions on this pages:  
-* stable versions, used in production - https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/
-* unstable versions, used in test stand - https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/
+You can find compatible versions on these pages:
+* stable versions, used in [production](https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/)
+* unstable versions, used in [test stand](https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/)
 
 ## "local build" images usage
 If you need to create local build binaries for any-sync-*, you can do so by using the "overrides" functionality in docker-compose.
