@@ -4,18 +4,9 @@ Self-host for any-sync, designed for review and testing purposes.
 > please don't use it for production!
 
 ## Prepare
-* Create a personal access token:
-  * go to https://github.com/settings/tokens/
-  * push "generate new token (classic)"
-    minimal permissions "read:packages"
+* install docker and docker-compose https://docs.docker.com/compose/install/linux/
 
-* login in ghcr.io:
-  ```
-  echo <you token>| docker login ghcr.io -u <github username> --password-stdin
-  ```
-* install docker and docker compose https://docs.docker.com/compose/install/linux/
-
-## usage
+## Usage
 * start stand:
   ```
   make start
