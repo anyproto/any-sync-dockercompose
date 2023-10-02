@@ -24,6 +24,12 @@ generate_etc:
 	perl -i -pe's|%ANY_SYNC_COORDINATOR_ADDRESSES%|${ANY_SYNC_COORDINATOR_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
 	perl -i -pe's|%ANY_SYNC_FILENODE_ADDRESSES%|${ANY_SYNC_FILENODE_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
 	perl -i -pe's|%ANY_SYNC_CONSENSUSNODE_ADDRESSES%|${ANY_SYNC_CONSENSUSNODE_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_NODE_1_QUIC_ADDRESSES%|${ANY_SYNC_NODE_1_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_NODE_2_QUIC_ADDRESSES%|${ANY_SYNC_NODE_2_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_NODE_3_QUIC_ADDRESSES%|${ANY_SYNC_NODE_3_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_COORDINATOR_QUIC_ADDRESSES%|${ANY_SYNC_COORDINATOR_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_FILENODE_QUIC_ADDRESSES%|${ANY_SYNC_FILENODE_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
+	perl -i -pe's|%ANY_SYNC_CONSENSUSNODE_QUIC_ADDRESSES%|${ANY_SYNC_CONSENSUSNODE_QUIC_ADDRESSES}|g' tmp/etc/network.yml tmp/etc/*/*.yml
 	perl -i -pe's|%MONGO_CONNECT%|${MONGO_CONNECT}|g' tmp/etc/network.yml tmp/etc/*/*.yml
 	perl -i -pe's|%REDIS_URL%|${REDIS_URL}|g' tmp/etc/network.yml tmp/etc/*/*.yml
 	perl -i -pe's|%AWS_PORT%|${AWS_PORT}|g' tmp/etc/network.yml tmp/etc/*/*.yml

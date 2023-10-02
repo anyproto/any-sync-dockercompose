@@ -14,3 +14,8 @@ yamux:
     writeTimeoutSec: 10
     dialTimeoutSec: 10
 
+quic:
+    listenAddrs:
+        - %ANY_SYNC_CONSENSUSNODE_QUIC_ADDRESSES%
+    writeTimeoutSec: 10
+    dialTimeoutSec: 10

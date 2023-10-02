@@ -54,6 +54,7 @@ services:
       - any-sync-coordinator_bootstrap
     ports:
       - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
+      - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}"
       - 8005:8000
     volumes:
       - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
@@ -71,6 +72,7 @@ services:
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
+      - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}"
       - 8004:8000
     volumes:
       - ./tmp/etc/any-sync-filenode/:/etc/any-sync-filenode/
@@ -87,6 +89,7 @@ services:
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
+      - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}"
       - 8081:8080
       - 8001:8000
     volumes:
@@ -104,6 +107,7 @@ services:
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
+      - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}"
       - 8082:8080
       - 8002:8000
     volumes:
@@ -121,6 +125,7 @@ services:
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
+      - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}"
       - 8083:8080
       - 8003:8000
     volumes:
@@ -138,6 +143,7 @@ services:
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
+      - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}"
       - 8006:8000
     volumes:
       - ./tmp/etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
