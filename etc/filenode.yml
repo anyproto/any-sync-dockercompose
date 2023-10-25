@@ -1,5 +1,6 @@
 s3Store:
-    bucket: s3-emulator:%AWS_PORT%
+    bucket: s3-emulator
+    indexBucket: s3-emulator
     maxThreads: 16
     profile: default
     region: eu-central-1

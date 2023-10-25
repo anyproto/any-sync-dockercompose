@@ -27,9 +27,9 @@ services:
       - ./tmp/mongo-3/:/data/db
   redis:
     container_name: redis
-    image: redis:latest
+    image: redis/redis-stack-server:latest
     restart: always
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
