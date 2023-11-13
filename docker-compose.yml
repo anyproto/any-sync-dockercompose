@@ -29,7 +29,7 @@ services:
     container_name: redis
     image: redis/redis-stack-server:latest
     restart: always
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
