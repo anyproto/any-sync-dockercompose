@@ -1,13 +1,18 @@
-FROM golang:1.19
+FROM golang:1.19 as generator
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
+    chmod +x /usr/bin/yq && \
+    go install github.com/anyproto/any-sync-tools/anyconf@latest
 
-# git {{
-RUN apt-get update && apt-get install -y ca-certificates git-core
-# }}
+WORKDIR /opt/generateconfig
+COPY --chmod=777 docker-generateconfig/generate_config.sh .env .
+RUN ./generate_config.sh
 
-RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+FROM alpine:3.18.4
+RUN apk add --no-cache bash perl
+WORKDIR /opt/processing
+COPY docker-generateconfig/etc/ etc/
+COPY --chmod=777 docker-generateconfig/processing.sh .
+COPY --from=generator /opt/generateconfig/ generateconfig/
 
-WORKDIR /generateconfig
-COPY .env /.env
-COPY gen.sh /gen.sh
+CMD ./processing.sh
 
-RUN go install github.com/anyproto/any-sync-tools/anyconf@latest

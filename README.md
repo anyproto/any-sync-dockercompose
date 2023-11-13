@@ -37,11 +37,16 @@ Self-host for any-sync, designed for review and testing purposes.
   docker-compose logs -f any-sync-filenode
   docker-compose logs -f
   ```
-* attach to vm:
+* attach to container:
   ```
   docker compose exec mongo-1 bash
   docker compose exec any-sync-node-1 bash
   docker compose exec any-sync-coordinator bash
+  ```
+
+* restart certain container:
+  ```
+  docker compose restart any-sync-node-1
   ```
 
 * get current network config
