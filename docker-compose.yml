@@ -2,56 +2,56 @@ version: "3.9"
 
 services:
   mongo-1:
-    image: mongo:7.0.2
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_1_PORT}
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
-      - ./data/mongo-1/:/data/db
+      - ./storage/mongo-1/:/data/db
     healthcheck:
       test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
 
   mongo-2:
-    image: mongo:7.0.2
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_2_PORT}
     ports:
       - "${MONGO_2_PORT}:${MONGO_2_PORT}"
     volumes:
-      - ./data/mongo-2/:/data/db
+      - ./storage/mongo-2/:/data/db
 
   mongo-3:
-    image: mongo:7.0.2
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_3_PORT}
     ports:
       - "${MONGO_3_PORT}:${MONGO_3_PORT}"
     volumes:
-      - ./data/mongo-3/:/data/db
+      - ./storage/mongo-3/:/data/db
 
   redis:
     container_name: redis
-    image: redis/redis-stack-server:7.2.0-v6
+    image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
-      - ./data/redis/:/data/
+      - ./storage/redis/:/data/
 
   s3-emulator:
-    image: stanislavt/s3-emulator:0.0.1
+    image: "stanislavt/s3-emulator:${S3_EMULATOR_VERSION}"
     ports:
       - "${AWS_PORT}:4569"
     volumes:
-      - ./data/s3_root:/s3_root
+      - ./storage/s3_root:/s3_root
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       - mongo-1
     volumes:
-      - ./config/any-sync-coordinator/:/etc/any-sync-coordinator/
+      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
     restart: no
     command: bash -c "sleep 10; /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
 
@@ -64,8 +64,8 @@ services:
       - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}"
       - 8005:8000
     volumes:
-      - ./config/any-sync-coordinator/:/etc/any-sync-coordinator/
-      - ./data/networkStore/any-sync-coordinator/:/networkStore/
+      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+      - ./storage/networkStore/any-sync-coordinator/:/networkStore/
     deploy:
       resources:
         limits:
@@ -84,9 +84,9 @@ services:
       - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}"
       - 8004:8000
     volumes:
-      - ./config/any-sync-filenode/:/etc/any-sync-filenode/
+      - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
       - ./.aws:/root/.aws:ro
-      - ./data/networkStore/any-sync-filenode/:/networkStore/
+      - ./storage/networkStore/any-sync-filenode/:/networkStore/
     deploy:
       resources:
         limits:
@@ -104,9 +104,9 @@ services:
       - 8081:8080
       - 8001:8000
     volumes:
-      - ./config/any-sync-node-1/:/etc/any-sync-node/
-      - ./data/storage/any-sync-node-1/:/storage/
-      - ./data/networkStore/any-sync-node-1/:/networkStore/
+      - ./etc/any-sync-node-1/:/etc/any-sync-node/
+      - ./storage/any-sync-node-1/:/storage/
+      - ./storage/networkStore/any-sync-node-1/:/networkStore/
     deploy:
       resources:
         limits:
@@ -124,9 +124,9 @@ services:
       - 8082:8080
       - 8002:8000
     volumes:
-      - ./config/any-sync-node-2/:/etc/any-sync-node/
-      - ./data/storage/any-sync-node-2/:/storage/
-      - ./data/networkStore/any-sync-node-2/:/networkStore/
+      - ./etc/any-sync-node-2/:/etc/any-sync-node/
+      - ./storage/any-sync-node-2/:/storage/
+      - ./storage/networkStore/any-sync-node-2/:/networkStore/
     deploy:
       resources:
         limits:
@@ -144,9 +144,9 @@ services:
       - 8083:8080
       - 8003:8000
     volumes:
-      - ./config/any-sync-node-3/:/etc/any-sync-node/
-      - ./data/storage/any-sync-node-3/:/storage/
-      - ./data/networkStore/any-sync-node-3/:/networkStore/
+      - ./etc/any-sync-node-3/:/etc/any-sync-node/
+      - ./storage/any-sync-node-3/:/storage/
+      - ./storage/networkStore/any-sync-node-3/:/networkStore/
     deploy:
       resources:
         limits:
@@ -163,8 +163,8 @@ services:
       - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}"
       - 8006:8000
     volumes:
-      - ./config/any-sync-consensusnode/:/etc/any-sync-consensusnode/
-      - ./data/networkStore/any-sync-consensusnode/:/networkStore/
+      - ./etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
+      - ./storage/networkStore/any-sync-consensusnode/:/networkStore/
     deploy:
       resources:
         limits:

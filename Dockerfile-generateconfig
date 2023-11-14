@@ -10,7 +10,7 @@ RUN ./generate_config.sh
 FROM alpine:3.18.4
 RUN apk add --no-cache bash perl
 WORKDIR /opt/processing
-COPY docker-generateconfig/etc/ etc/
+COPY docker-generateconfig/etc/ tmp-etc/
 COPY --chmod=777 docker-generateconfig/processing.sh .
 COPY --from=generator /opt/generateconfig/ generateconfig/
 

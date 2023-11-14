@@ -7,7 +7,7 @@ Self-host for any-sync, designed for review and testing purposes.
 * install docker and docker-compose https://docs.docker.com/compose/install/linux/
 
 ## Usage
-* start stand:
+* start stand - at the first run the directories `etc/` of configuration files and `storage/` for data storage will be generated:
   ```
   make start
   ```
@@ -27,9 +27,9 @@ Self-host for any-sync, designed for review and testing purposes.
   ```
   make clean
   ```
-* clean tmp files - deleting data for redis, mongo, s3, any-sync-*:
+* clean config and storage files - deleting data for redis, mongo, s3, any-sync-*:
   ```
-  make cleanTmp
+  make cleanEtcStorage
   ```
 * show logs:
   ```

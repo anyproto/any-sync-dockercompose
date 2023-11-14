@@ -3,7 +3,7 @@ include .env
 
 generate_config:
 	docker build -t generateconfig -f Dockerfile-generateconfig .
-	docker run --rm -v ${CURDIR}/config:/opt/processing/config --name any-sync-generator generateconfig
+	docker run --rm -v ${CURDIR}/etc:/opt/processing/etc --name any-sync-generator generateconfig
 
 start: generate_config
 	docker compose up -d
@@ -28,5 +28,6 @@ restart: down start
 update: down pull start
 upgrade: down clean start
 
-cleanTmp:
-	rm -rf config/
+cleanEtcStorage:
+	rm -rf etc/
+	rm -rf storage/
