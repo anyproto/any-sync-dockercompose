@@ -8,8 +8,18 @@ Self-host for any-sync, designed for review and testing purposes.
 
 ## Usage
 * start stand - at the first run the directories `etc/` of configuration files and `storage/` for data storage will be generated:
+
+  For Linux, MacOS and other nix* systems:
   ```
   make start
+  ```
+  For Windows (Run this in PowerShell, not cmd.exe):
+  ```
+  # Generate config
+  docker build -t generateconfig -f Dockerfile-generateconfig .
+  docker run --rm -v ${PWD}/etc:/opt/processing/etc --name any-sync-generator generateconfig
+  # Run containers
+  docker compose up -d
   ```
 * stop stand:
   ```
