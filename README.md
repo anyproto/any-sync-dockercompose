@@ -8,10 +8,12 @@ Self-host for any-sync, designed for review and testing purposes.
 
 ## Usage
 * start stand - at the first run the directories `etc/` of configuration files and `storage/` for data storage will be generated:
+
+  For Linux, MacOS and other nix* systems:
   ```
   make start
   ```
-  If for some reason you do not have the make utility or you are a Windows user, use the following commands:
+  For Windows (Run this in PowerShell, not cmd.exe):
   ```
   # Generate config
   docker build -t generateconfig -f Dockerfile-generateconfig .
