@@ -11,6 +11,14 @@ Self-host for any-sync, designed for review and testing purposes.
   ```
   make start
   ```
+  If for some reason you do not have the make utility or you are a Windows user, use the following commands:
+  ```
+  # Generate config
+  docker build -t generateconfig -f Dockerfile-generateconfig .
+  docker run --rm -v ${PWD}/etc:/opt/processing/etc --name any-sync-generator generateconfig
+  # Run containers
+  docker compose up -d
+  ```
 * stop stand:
   ```
   make stop
