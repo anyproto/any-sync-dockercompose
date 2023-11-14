@@ -1,69 +1,78 @@
 version: "3.9"
+
 services:
   mongo-1:
-    image: mongo
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_1_PORT}
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
-      - ./tmp/mongo-1/:/data/db
+      - ./storage/mongo-1/:/data/db
     healthcheck:
       test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
+
   mongo-2:
-    image: mongo
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_2_PORT}
     ports:
       - "${MONGO_2_PORT}:${MONGO_2_PORT}"
     volumes:
-      - ./tmp/mongo-2/:/data/db
+      - ./storage/mongo-2/:/data/db
+
   mongo-3:
-    image: mongo
+    image: "mongo:${MONGO_VERSION}"
     command: --replSet rs0 --port ${MONGO_3_PORT}
     ports:
       - "${MONGO_3_PORT}:${MONGO_3_PORT}"
     volumes:
-      - ./tmp/mongo-3/:/data/db
+      - ./storage/mongo-3/:/data/db
+
   redis:
     container_name: redis
-    image: redis/redis-stack-server:latest
+    image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
-      - ./tmp/redis/:/data/
+      - ./storage/redis/:/data/
+
   s3-emulator:
-    image: stanislavt/s3-emulator
+    image: "stanislavt/s3-emulator:${S3_EMULATOR_VERSION}"
     ports:
-      - "${AWS_PORT}:${AWS_PORT}"
+      - "${AWS_PORT}:4569"
     volumes:
-      - ./tmp/s3_root:/s3_root
+      - ./storage/s3_root:/s3_root
+
   any-sync-coordinator_bootstrap:
-    image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
-    depends_on: [mongo-1]
-    restart: "no"
-    volumes:
-      - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-    command: bash -c "sleep 10; /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
-  any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       - mongo-1
+    volumes:
+      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+    restart: no
+    command: bash -c "sleep 10; /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
+
+  any-sync-coordinator:
+    image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
+    depends_on:
       - any-sync-coordinator_bootstrap
     ports:
       - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
       - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}"
       - 8005:8000
     volumes:
-      - ./tmp/etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-      - ./tmp/networkStore/any-sync-coordinator/:/networkStore/
+      - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
+      - ./storage/networkStore/any-sync-coordinator/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 10; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
+
   any-sync-filenode:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
@@ -75,14 +84,16 @@ services:
       - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}"
       - 8004:8000
     volumes:
-      - ./tmp/etc/any-sync-filenode/:/etc/any-sync-filenode/
+      - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
       - ./.aws:/root/.aws:ro
-      - ./tmp/networkStore/any-sync-filenode/:/networkStore/
+      - ./storage/networkStore/any-sync-filenode/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
+
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
@@ -93,14 +104,16 @@ services:
       - 8081:8080
       - 8001:8000
     volumes:
-      - ./tmp/etc/any-sync-node-1/:/etc/any-sync-node/
-      - ./tmp/storage/any-sync-node-1/:/storage/
-      - ./tmp/networkStore/any-sync-node-1/:/networkStore/
+      - ./etc/any-sync-node-1/:/etc/any-sync-node/
+      - ./storage/any-sync-node-1/:/storage/
+      - ./storage/networkStore/any-sync-node-1/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
@@ -111,14 +124,16 @@ services:
       - 8082:8080
       - 8002:8000
     volumes:
-      - ./tmp/etc/any-sync-node-2/:/etc/any-sync-node/
-      - ./tmp/storage/any-sync-node-2/:/storage/
-      - ./tmp/networkStore/any-sync-node-2/:/networkStore/
+      - ./etc/any-sync-node-2/:/etc/any-sync-node/
+      - ./storage/any-sync-node-2/:/storage/
+      - ./storage/networkStore/any-sync-node-2/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
@@ -129,14 +144,16 @@ services:
       - 8083:8080
       - 8003:8000
     volumes:
-      - ./tmp/etc/any-sync-node-3/:/etc/any-sync-node/
-      - ./tmp/storage/any-sync-node-3/:/storage/
-      - ./tmp/networkStore/any-sync-node-3/:/networkStore/
+      - ./etc/any-sync-node-3/:/etc/any-sync-node/
+      - ./storage/any-sync-node-3/:/storage/
+      - ./storage/networkStore/any-sync-node-3/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
+
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
     depends_on:
@@ -146,10 +163,11 @@ services:
       - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}"
       - 8006:8000
     volumes:
-      - ./tmp/etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
-      - ./tmp/networkStore/any-sync-consensusnode/:/networkStore/
+      - ./etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
+      - ./storage/networkStore/any-sync-consensusnode/:/networkStore/
     deploy:
       resources:
         limits:
           memory: 500M
+    restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-consensusnode -c /etc/any-sync-consensusnode/config.yml"

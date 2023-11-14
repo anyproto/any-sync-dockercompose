@@ -1,3 +1,4 @@
-tmp/
+etc/
+storage/
 repos/
 docker-compose.override.yml
