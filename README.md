@@ -61,8 +61,8 @@ Self-host for any-sync, designed for review and testing purposes.
 
 * get current network config
   ```
-  docker compose exec mongo-1 mongosh coordinator
-  db.nodeConf.find().sort( { _id: -1 } ).limit(1)
+  docker compose exec mongo-1 mongosh 127.0.0.1:27001/coordinator
+  db.getMongo().setReadPref('primaryPreferred'); db.nodeConf.find().sort( { _id: -1 } ).limit(1)
   ```
 
 ## Set specific versions
