@@ -16,6 +16,12 @@ for node_type in filenode coordinator consensusnode; do
     mkdir -p "${dest_path}/any-sync-${node_type}"
 done
 
+# add external listen host
+./setListenIp.py "${EXTERNAL_LISTEN_HOST}" "generateconfig/nodes.yml"
+
+# create config for clients
+cp "generateconfig/nodes.yml" "${dest_path}/client.yml"
+
 # Generate network file
 sed 's|^|    |; 1s|^|network:\n|' "generateconfig/nodes.yml" > "${network_file}"
 

@@ -65,9 +65,18 @@ Self-host for any-sync, designed for review and testing purposes.
   db.getMongo().setReadPref('primaryPreferred'); db.nodeConf.find().sort( { _id: -1 } ).limit(1)
   ```
 
-## Set specific versions
+* run client
+  ```
+  # macos example
+  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=<pathToRepo>/any-sync-dockercompose/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
+  ```
+
+## configuration
 Use file .env
-### Compatible versions
+* Set specific versions: find and edit variables with suffix "_VERSION"
+* Set external listen host: default 127.0.0.1, for change you need edit variable "EXTERNAL_LISTEN_HOST"
+
+## Compatible versions
 You can find compatible versions on these pages:
 * stable versions, used in [production](https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/)
 * unstable versions, used in [test stand](https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/)

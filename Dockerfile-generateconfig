@@ -6,11 +6,11 @@ COPY --chmod=777 docker-generateconfig/generate_config.sh .env .
 RUN ./generate_config.sh
 
 FROM alpine:3.18.4
-RUN apk add --no-cache bash perl
+RUN apk add --no-cache bash yq perl python3 py3-yaml
 WORKDIR /opt/processing
 COPY docker-generateconfig/etc/ tmp-etc/
 COPY --chmod=777 docker-generateconfig/processing.sh .
+COPY --chmod=777 docker-generateconfig/setListenIp.py .
 COPY --from=generator /opt/generateconfig/ generateconfig/
 
 CMD ./processing.sh
-

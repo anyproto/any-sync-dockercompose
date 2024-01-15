@@ -24,3 +24,8 @@ quic:
         - %ANY_SYNC_COORDINATOR_QUIC_ADDRESSES%
     writeTimeoutSec: 10
     dialTimeoutSec: 10
+
+fileLimit:
+    limitDefault: 1099511627776
+    limitAlphaUsers: 1099511627776
+    limitNightlyUsers: 1099511627776
