@@ -33,7 +33,7 @@ services:
     container_name: redis
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
+    command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
@@ -45,6 +45,10 @@ services:
       - "${AWS_PORT}:4569"
     volumes:
       - ./storage/s3_root:/s3_root
+    networks:
+      default:
+        aliases:
+          - s3-emulator.s3-emulator
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
