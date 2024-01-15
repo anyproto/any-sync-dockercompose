@@ -39,6 +39,7 @@ if ! [[ -s account0.yml ]]; then
     fi
 fi
 
+yq --indent 4 --inplace 'del(.creationTime)' nodes.yml
 yq --indent 4 --inplace ".networkId |= \"${NETWORK_ID}\"" nodes.yml
 yq --indent 4 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account3.yml
 yq --indent 4 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account5.yml
