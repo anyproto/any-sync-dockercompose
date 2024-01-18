@@ -66,10 +66,9 @@ Self-host for any-sync, designed for review and testing purposes.
   ```
 
 * run client
-  ```
-  # macos example
-  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=<pathToRepo>/any-sync-dockercompose/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
-  ```
+  
+  Use `<pathToRepo>/any-sync-dockercompose/etc/client.yml` as a network configuration for the clients.
+  See [the documentation](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks) for more details.
 
 ## configuration
 Use file .env
