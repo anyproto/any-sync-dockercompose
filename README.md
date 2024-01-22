@@ -65,7 +65,12 @@ Self-host for any-sync, designed for review and testing purposes.
   db.getMongo().setReadPref('primaryPreferred'); db.nodeConf.find().sort( { _id: -1 } ).limit(1)
   ```
 
-* run client
+* run client (GUI)
+  
+  Use `<pathToRepo>/any-sync-dockercompose/etc/client.yml` as a network configuration for the clients.
+  See [the documentation](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks) for more details.
+
+* run client (CLI) 
   ```
   # macos example
   ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=<pathToRepo>/any-sync-dockercompose/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
