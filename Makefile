@@ -7,6 +7,8 @@ generate_config:
 
 start: generate_config
 	docker compose up -d
+	@echo "Done! Upload your self-hosted network configuration file ${CURDIR}/etc/client.yml into the client app"
+	@echo "See: https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks"
 
 stop:
 	docker compose stop
