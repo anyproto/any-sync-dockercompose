@@ -38,17 +38,46 @@ services:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ./storage/redis/:/data/
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 30s
+      retries: 3
 
-  s3-emulator:
-    image: "stanislavt/s3-emulator:${S3_EMULATOR_VERSION}"
+  minio:
+    container_name: minio
+    image: "minio/minio:${MINIO_VERSION}"
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
+      MINIO_ROOT_PASSWORD: "${AWS_SECRET_ACCESS_KEY}"
     ports:
-      - "${AWS_PORT}:4569"
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_WEB_PORT}:9001"
     volumes:
-      - ./storage/s3_root:/s3_root
+      - ./storage/minio:/data
+    healthcheck:
+      test: bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
     networks:
       default:
         aliases:
-          - s3-emulator.s3-emulator
+          - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
+
+  create-bucket:
+    image: minio/mc:latest
+    environment:
+      MC_HOST_minio: http://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio:${MINIO_PORT}
+    restart: no
+    depends_on:
+      - minio
+    entrypoint:
+      - sh
+      - -c
+      - mc mb minio/${MINIO_BUCKET}
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
@@ -81,7 +110,7 @@ services:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
       - redis
-      - s3-emulator
+      - minio
       - any-sync-coordinator
     ports:
       - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
