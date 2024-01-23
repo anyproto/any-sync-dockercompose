@@ -26,6 +26,6 @@ quic:
     dialTimeoutSec: 10
 
 fileLimit:
-    limitDefault: 1099511627776
-    limitAlphaUsers: 1099511627776
-    limitNightlyUsers: 1099511627776
+    limitDefault: %ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT%
+    limitAlphaUsers: %ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS%
+    limitNightlyUsers: %ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS%

@@ -1,10 +1,11 @@
 s3Store:
-    bucket: s3-emulator
-    indexBucket: s3-emulator
+    bucket: %MINIO_BUCKET%
+    indexBucket: %MINIO_BUCKET%
     maxThreads: 16
     profile: default
-    region: eu-central-1
-    endpoint: http://s3-emulator:%AWS_PORT%
+    region: us-east-1
+    endpoint: http://minio:%MINIO_PORT%
+    forcePathStyle: true # 'true' for self-hosted S3 Object Storage
 
 redis:
     isCluster: false
