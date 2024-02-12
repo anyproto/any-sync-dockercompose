@@ -48,7 +48,15 @@ for node_type in node_1 node_2 node_3 coordinator filenode consensusnode; do
 done
 
 # Replace other placeholders
-placeholders=( "MONGO_CONNECT" "REDIS_URL" "MINIO_PORT" "MINIO_BUCKET" "ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT" "ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS" "ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS")
+placeholders=(
+    "MONGO_CONNECT"
+    "REDIS_URL"
+    "MINIO_PORT"
+    "MINIO_BUCKET"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS"
+)
 for placeholder in "${placeholders[@]}"; do
     perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${network_file}" "${dest_path}/"/*/*.yml
 done
