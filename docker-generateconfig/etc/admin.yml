@@ -1,0 +1,9 @@
+---
+listen:
+  host: %ANY_SYNC_ADMIN_HOST%
+  port: %ANY_SYNC_ADMIN_PORT%
+mongo:
+  url: %MONGO_CONNECT%
+redis:
+  host: %REDIS_HOST%
+  port: %REDIS_PORT%

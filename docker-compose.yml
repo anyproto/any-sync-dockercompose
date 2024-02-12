@@ -204,3 +204,13 @@ services:
           memory: 500M
     restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-consensusnode -c /etc/any-sync-consensusnode/config.yml"
+
+  any-sync-admin:
+    image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
+    depends_on:
+      - any-sync-coordinator
+    ports:
+      - "80:${ANY_SYNC_ADMIN_PORT}"
+    volumes:
+      - ./etc/any-sync-admin/:/etc/any-sync-admin/
+    restart: on-failure
