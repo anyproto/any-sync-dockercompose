@@ -30,7 +30,6 @@ services:
       - ./storage/mongo-3/:/data/db
 
   redis:
-    container_name: redis
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
@@ -45,7 +44,6 @@ services:
       retries: 3
 
   minio:
-    container_name: minio
     image: "minio/minio:${MINIO_VERSION}"
     restart: always
     command: server /data --console-address ":9001"
@@ -208,7 +206,10 @@ services:
   any-sync-admin:
     image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
     depends_on:
-      - any-sync-coordinator
+      - redis
+      - mongo-1
+      - mongo-2
+      - mongo-3
     ports:
       - "80:${ANY_SYNC_ADMIN_PORT}"
     volumes:
