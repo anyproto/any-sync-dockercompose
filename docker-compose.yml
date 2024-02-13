@@ -3,19 +3,19 @@ version: "3.9"
 services:
   mongo-1:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_1_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
+      test: test $$(echo "rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
 
   mongo-2:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_2_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_2_PORT}
     ports:
       - "${MONGO_2_PORT}:${MONGO_2_PORT}"
     volumes:
@@ -23,7 +23,7 @@ services:
 
   mongo-3:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_3_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_3_PORT}
     ports:
       - "${MONGO_3_PORT}:${MONGO_3_PORT}"
     volumes:

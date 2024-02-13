@@ -54,6 +54,7 @@ done
 # Replace other placeholders
 placeholders=(
     "MONGO_CONNECT"
+    "MONGO_URL"
     "REDIS_URL"
     "MINIO_PORT"
     "MINIO_BUCKET"
