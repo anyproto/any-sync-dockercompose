@@ -1,7 +1,9 @@
 # Docker-compose for any-sync
-Self-host for any-sync, designed for review and testing purposes.
+Self-host for any-sync, designed for personal usage or for review and testing purposes.
+
 > [!IMPORTANT]
-> please don't use it for production!
+> This image is suitable for running your personal self-hosted any-sync network for home usage.
+> If you plan to self-host a heavily used any-sync network, please consider other options.
 
 > [!WARNING]
 > Starting from release version v2.0.1, we have transitioned from the **s3-emulator** to **minio** as the data storage for any-sync-filenode. Please note that this change will result in the loss of any-sync-filenode data (stored at the path `./storage/s3_root`).
