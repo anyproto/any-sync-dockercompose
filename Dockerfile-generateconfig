@@ -2,11 +2,12 @@ FROM golang:1.21.6-alpine3.19 as generator
 RUN apk add --no-cache bash yq
 RUN go install github.com/anyproto/any-sync-tools/anyconf@latest
 WORKDIR /opt/generateconfig
+COPY ./storage/docker-generateconfig/ .
 COPY --chmod=777 docker-generateconfig/generate_config.sh .env .
 RUN ./generate_config.sh
 
 FROM alpine:3.18.4
-RUN apk add --no-cache bash yq perl python3 py3-yaml
+RUN apk add --no-cache bash yq perl python3 py3-yaml rsync
 WORKDIR /opt/processing
 COPY docker-generateconfig/etc/ tmp-etc/
 COPY --chmod=777 docker-generateconfig/processing.sh .

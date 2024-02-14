@@ -2,8 +2,9 @@
 include .env
 
 generate_config:
+	mkdir -p ./storage/docker-generateconfig/
 	docker build -t generateconfig -f Dockerfile-generateconfig .
-	docker run --rm -v ${CURDIR}/etc:/opt/processing/etc --name any-sync-generator generateconfig
+	docker run --rm --volume ${CURDIR}/etc:/opt/processing/etc --volume ${CURDIR}/storage/docker-generateconfig:/opt/processing/docker-generateconfig --name any-sync-generator generateconfig
 
 start: generate_config
 	docker compose up -d
@@ -14,7 +15,7 @@ stop:
 	docker compose stop
 
 clean:
-	docker system prune --all
+	docker system prune --all --volumes
 
 pull:
 	docker compose pull
