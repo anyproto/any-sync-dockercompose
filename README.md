@@ -107,6 +107,9 @@ If you need to create local build binaries for any-sync-*, you can do so by usin
   make restart
   ```
 
+## limits web admin
+open link in browser: http://127.0.0.1:80
+
 ## Contribution
 Thank you for your desire to develop Anytype together!
 

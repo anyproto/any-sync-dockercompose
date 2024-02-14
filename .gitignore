@@ -1,3 +1,4 @@
-etc/
-storage/
-docker-compose.override.yml
+/etc/
+/storage/
+/docker-compose.override.yml
+/repos/

@@ -39,6 +39,10 @@ cat "${network_file}" tmp-etc/common.yml generateconfig/account5.yml tmp-etc/con
 # Copy network file to coordinator directory
 cp "generateconfig/nodes.yml" "${dest_path}/any-sync-coordinator/network.yml"
 
+# Generate any-sync-admin config
+mkdir -p ${dest_path}/any-sync-admin
+cp "tmp-etc/admin.yml" ${dest_path}/any-sync-admin/config.yml
+
 # Replace placeholders in config files
 for node_type in node_1 node_2 node_3 coordinator filenode consensusnode; do
     addresses="ANY_SYNC_${node_type^^}_ADDRESSES"
@@ -48,7 +52,20 @@ for node_type in node_1 node_2 node_3 coordinator filenode consensusnode; do
 done
 
 # Replace other placeholders
-placeholders=( "MONGO_CONNECT" "REDIS_URL" "MINIO_PORT" "MINIO_BUCKET" "ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT" "ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS" "ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS")
+placeholders=(
+    "MONGO_CONNECT"
+    "MONGO_URL"
+    "REDIS_URL"
+    "MINIO_PORT"
+    "MINIO_BUCKET"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS"
+    "ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS"
+    "ANY_SYNC_ADMIN_HOST"
+    "ANY_SYNC_ADMIN_PORT"
+    "REDIS_HOST"
+    "REDIS_PORT"
+)
 for placeholder in "${placeholders[@]}"; do
     perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${network_file}" "${dest_path}/"/*/*.yml
 done

@@ -3,19 +3,19 @@ version: "3.9"
 services:
   mongo-1:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_1_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
+      test: test $$(echo "rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
 
   mongo-2:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_2_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_2_PORT}
     ports:
       - "${MONGO_2_PORT}:${MONGO_2_PORT}"
     volumes:
@@ -23,14 +23,13 @@ services:
 
   mongo-3:
     image: "mongo:${MONGO_VERSION}"
-    command: --replSet rs0 --port ${MONGO_3_PORT}
+    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_3_PORT}
     ports:
       - "${MONGO_3_PORT}:${MONGO_3_PORT}"
     volumes:
       - ./storage/mongo-3/:/data/db
 
   redis:
-    container_name: redis
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
@@ -45,7 +44,6 @@ services:
       retries: 3
 
   minio:
-    container_name: minio
     image: "minio/minio:${MINIO_VERSION}"
     restart: always
     command: server /data --console-address ":9001"
@@ -204,3 +202,16 @@ services:
           memory: 500M
     restart: on-failure
     command: bash -c "sleep 15; /bin/any-sync-consensusnode -c /etc/any-sync-consensusnode/config.yml"
+
+  any-sync-admin:
+    image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
+    depends_on:
+      - redis
+      - mongo-1
+      - mongo-2
+      - mongo-3
+    ports:
+      - "80:${ANY_SYNC_ADMIN_PORT}"
+    volumes:
+      - ./etc/any-sync-admin/:/etc/any-sync-admin/
+    restart: on-failure

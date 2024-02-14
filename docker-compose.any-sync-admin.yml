@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  any-sync-admin:
+    image: localbuild-admin
+    build:
+      context: .
+      dockerfile: repos/any-sync-admin/Dockerfile
+      ssh:
+        - default
+      args:
+        REPO_DIR: repos/any-sync-admin/
+    command: python app.py
