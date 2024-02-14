@@ -69,3 +69,6 @@ placeholders=(
 for placeholder in "${placeholders[@]}"; do
     perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${network_file}" "${dest_path}/"/*/*.yml
 done
+
+# save generated configs
+rsync -a --delete generateconfig/ /opt/processing/docker-generateconfig
