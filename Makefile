@@ -4,7 +4,10 @@ include .env
 generate_config:
 	mkdir -p ./storage/docker-generateconfig/
 	docker build -t generateconfig -f Dockerfile-generateconfig .
-	docker run --rm --volume ${CURDIR}/etc:/opt/processing/etc --volume ${CURDIR}/storage/docker-generateconfig:/opt/processing/docker-generateconfig --name any-sync-generator generateconfig
+	docker run --rm \
+		--volume ${CURDIR}/etc:/opt/processing/etc \
+		--volume ${CURDIR}/storage/docker-generateconfig:/opt/processing/docker-generateconfig \
+		--name any-sync-generator generateconfig
 
 start: generate_config
 	docker compose up -d
@@ -30,9 +33,8 @@ build:
 	docker compose build --no-cache --progress plain
 
 restart: down start
-update: down pull start
+update: pull down start
 upgrade: down clean start
 
 cleanEtcStorage:
-	rm -rf etc/
-	rm -rf storage/
+	rm -rf etc/ storage/

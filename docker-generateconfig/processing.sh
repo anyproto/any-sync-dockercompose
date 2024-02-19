@@ -6,15 +6,13 @@ source generateconfig/.env
 dest_path="etc"
 network_file="${dest_path}/network.yml"
 
-# Create directories for all node
-for i in {1..3}; do
-    mkdir -p "${dest_path}/any-sync-node-${i}"
-done
-
-# Create directories for other node types
-for node_type in filenode coordinator consensusnode; do
+# Create directories for all node types
+for node_type in node-1 node-2 node-3 filenode coordinator consensusnode admin; do
     mkdir -p "${dest_path}/any-sync-${node_type}"
 done
+
+# Create directory for aws credentials
+mkdir -p "${dest_path}/.aws"
 
 # add external listen host
 ./setListenIp.py "${EXTERNAL_LISTEN_HOST}" "generateconfig/nodes.yml"
@@ -40,8 +38,16 @@ cat "${network_file}" tmp-etc/common.yml generateconfig/account5.yml tmp-etc/con
 cp "generateconfig/nodes.yml" "${dest_path}/any-sync-coordinator/network.yml"
 
 # Generate any-sync-admin config
-mkdir -p ${dest_path}/any-sync-admin
 cp "tmp-etc/admin.yml" ${dest_path}/any-sync-admin/config.yml
+
+# Generate aws credentials
+cp "tmp-etc/aws-credentials" ${dest_path}/.aws/credentials
+
+# Replace placeholders for aws credentials
+placeholders=( "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
+for placeholder in "${placeholders[@]}"; do
+    perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${dest_path}/"/.aws/credentials
+done
 
 # Replace placeholders in config files
 for node_type in node_1 node_2 node_3 coordinator filenode consensusnode; do

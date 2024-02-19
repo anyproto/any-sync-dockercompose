@@ -116,7 +116,7 @@ services:
       - 8004:8000
     volumes:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
-      - ./.aws:/root/.aws:ro
+      - ./etc/.aws:/root/.aws:ro
       - ./storage/networkStore/any-sync-filenode/:/networkStore/
     deploy:
       resources:
