@@ -211,7 +211,7 @@ services:
       - mongo-2
       - mongo-3
     ports:
-      - "80:${ANY_SYNC_ADMIN_PORT}"
+      - "${ANY_SYNC_ADMIN_PORT}:80"
     volumes:
       - ./etc/any-sync-admin/:/etc/any-sync-admin/
     restart: on-failure
