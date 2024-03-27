@@ -20,6 +20,9 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
   ```
   For Windows (Run this in PowerShell, not cmd.exe):
   ```
+  # Disable auto convert LF to CRLF
+  git config --global core.autocrlf false
+
   # Generate config
   docker build -t generateconfig -f Dockerfile-generateconfig .
   docker run --rm -v ${PWD}/etc:/opt/processing/etc --name any-sync-generator generateconfig
