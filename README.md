@@ -21,6 +21,7 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
   For Windows (Run this in PowerShell, not cmd.exe):
   ```
   # Disable auto convert LF to CRLF
+  # !!! run BEFORE clone repo !!!
   git config --global core.autocrlf false
 
   # Generate config
