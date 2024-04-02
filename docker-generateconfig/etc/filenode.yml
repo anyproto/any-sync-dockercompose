@@ -27,3 +27,5 @@ quic:
         - %ANY_SYNC_FILENODE_QUIC_ADDRESSES%
     writeTimeoutSec: 10
     dialTimeoutSec: 10
+
+defaultLimit: %ANY_SYNC_FILENODE_DEFAULT_LIMIT%
