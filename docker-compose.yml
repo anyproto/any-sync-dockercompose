@@ -9,7 +9,7 @@ services:
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:'mongo-1:${MONGO_1_PORT}'},{_id:1,host:'mongo-2:${MONGO_2_PORT}'},{_id:2,host:'mongo-3:${MONGO_3_PORT}'}]}) }" | mongosh --port ${MONGO_1_PORT} --quiet
+      test: test $$(echo "rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"},{_id:1,host:\"mongo-2:${MONGO_2_PORT}\"},{_id:2,host:\"mongo-3:${MONGO_3_PORT}\"}]}).ok || rs.status().ok" | mongosh --port ${MONGO_1_PORT} --quiet) -eq 1
       interval: 10s
       start_period: 30s
 
