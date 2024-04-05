@@ -1,0 +1,31 @@
+# Upgrade Guide
+
+This document provides detailed instructions for upgrading between different versions of the project.
+
+## General Recommendations
+
+- Always back up data dir (./storage) and configuration (./etc) before starting the upgrade process.
+- Follow the instructions for the specific version you are upgrading to.
+
+## Generic Update Routine
+
+### Before the Upgrade
+
+1. Ensure you have a complete backup of your data and configuration.
+
+### Upgrade Process
+
+usually enough to run this update command ```make update```
+in some cases it may be necessary to run ```make upgrade```
+
+
+### After the Upgrade
+
+1. Check logs for any errors. ```docker-compose logs -f```
+2. Verify that all critical functionalities are working as expected.
+
+## Upgrading from v1.x.x to 2.x.x
+
+Starting with version 2.0.1, we have switched from s3-emulator to MinIO for storing data uploaded via the any-sync-filenode daemon.  
+To preserve your data, you will need to manually migrate it from s3-emulator to MinIO.  
+For this You can use https://min.io/docs/minio/linux/reference/minio-mc/mc-mirror.html.  
