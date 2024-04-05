@@ -35,9 +35,5 @@ Starting with version 3.0.0, we have reduced mongo instances from 3 to 1.
 For correctly working You need reconfigure mongo cluster.  
 After Upgrade please run:
 ```
-docker compose exec mongo-1 mongosh 127.0.0.1:27001/coordinator
-use admin
-var cfg = rs.conf()
-cfg.members = [{ _id: 0, host: "mongo-1:27001" }]
-rs.reconfig(cfg, {force: true})
+docker compose exec mongo-1 mongosh --port 27001 --eval 'rs.reconfig({_id: rs.conf()._id, members: [{ _id: 0, host: "mongo-1:27001" }]}, {force: true});'
 ```
