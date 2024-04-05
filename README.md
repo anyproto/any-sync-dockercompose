@@ -6,7 +6,18 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > If you plan to self-host a heavily used any-sync network, please consider other options.
 
 > [!WARNING]
-> Starting from release version v2.0.1, we have transitioned from the **s3-emulator** to **minio** as the data storage for any-sync-filenode. Please note that this change will result in the loss of any-sync-filenode data (stored at the path `./storage/s3_root`).
+> Before upgrading please read [UPGRADE.md](./UPGRADE.md)
+
+## Table of Contents
+- [Prepare](#prepare)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Compatible versions](#compatible-versions)
+- [Local build](#local-build)
+- [Limits web admin](#limits-web-admin)
+- [Upgrading](#upgrading)
+- [Changelog](#changelog)
+- [Contribution](#contribution)
 
 ## Prepare
 * install docker and docker-compose https://docs.docker.com/compose/install/linux/
@@ -95,7 +106,7 @@ You can find compatible versions on these pages:
 * stable versions, used in [production](https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/)
 * unstable versions, used in [test stand](https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/)
 
-## "local build" images usage
+## Local build
 If you need to create local build binaries for any-sync-*, you can do so by using the "overrides" functionality in docker-compose.
 
 * clone repos
@@ -111,8 +122,19 @@ If you need to create local build binaries for any-sync-*, you can do so by usin
   make restart
   ```
 
-## limits web admin
+## Limits web admin
 open link in browser: http://127.0.0.1:80
+
+## Upgrading
+For detailed instructions of upgrading to the latest version, please see the [UPGRADE.md](./UPGRADE.md) file.
+
+## Changelog
+For a detailed list of changes in each version, check out the [CHANGELOG.md](./CHANGELOG.md) file.  
+For auto generate CHANGELOG.md file please use commands:
+```
+pip install git-changelog
+git-changelog --output CHANGELOG.md
+```
 
 ## Contribution
 Thank you for your desire to develop Anytype together!

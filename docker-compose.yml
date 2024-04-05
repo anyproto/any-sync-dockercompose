@@ -9,25 +9,9 @@ services:
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:'mongo-1:${MONGO_1_PORT}'},{_id:1,host:'mongo-2:${MONGO_2_PORT}'},{_id:2,host:'mongo-3:${MONGO_3_PORT}'}]}) }" | mongosh --port ${MONGO_1_PORT} --quiet
+      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --port ${MONGO_1_PORT} --quiet
       interval: 10s
       start_period: 30s
-
-  mongo-2:
-    image: "mongo:${MONGO_VERSION}"
-    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_2_PORT}
-    ports:
-      - "${MONGO_2_PORT}:${MONGO_2_PORT}"
-    volumes:
-      - ./storage/mongo-2/:/data/db
-
-  mongo-3:
-    image: "mongo:${MONGO_VERSION}"
-    command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_3_PORT}
-    ports:
-      - "${MONGO_3_PORT}:${MONGO_3_PORT}"
-    volumes:
-      - ./storage/mongo-3/:/data/db
 
   redis:
     image: "redis/redis-stack-server:${REDIS_VERSION}"
@@ -208,8 +192,6 @@ services:
     depends_on:
       - redis
       - mongo-1
-      - mongo-2
-      - mongo-3
     ports:
       - "${EXTERNAL_ANY_SYNC_ADMIN_PORT}:${ANY_SYNC_ADMIN_PORT}"
     volumes:
