@@ -6,7 +6,7 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > If you plan to self-host a heavily used any-sync network, please consider other options.
 
 > [!WARNING]
-> Before upgrading please read [Upgrading](#upgrading)
+> Before upgrading please read [UPGRADE.md](./UPGRADE.md)
 
 ## Table of Contents
 - [Prepare](#prepare)
