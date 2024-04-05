@@ -24,7 +24,7 @@ in some cases it may be necessary to run ```make upgrade```
 1. Check logs for any errors. ```docker-compose logs -f```
 2. Verify that all critical functionalities are working as expected.
 
-## Upgrading from v1.x.x to 2.x.x
+## Upgrading from v1.x.x to v2.x.x
 
 Starting with version 2.0.1, we have switched from s3-emulator to MinIO for storing data uploaded via the any-sync-filenode daemon.  
 To preserve your data, you will need to manually migrate it from s3-emulator to MinIO.  
