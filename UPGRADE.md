@@ -29,3 +29,15 @@ in some cases it may be necessary to run ```make upgrade```
 Starting with version 2.0.1, we have switched from s3-emulator to MinIO for storing data uploaded via the any-sync-filenode daemon.  
 To preserve your data, you will need to manually migrate it from s3-emulator to MinIO.  
 For this You can use https://min.io/docs/minio/linux/reference/minio-mc/mc-mirror.html.  
+
+## Upgrading from v2.x.x to v3.x.x
+Starting with version 3.0.0, we have reduced mongo instances from 3 to 1.  
+For correctly working You need reconfigure mongo cluster.  
+After Upgrade please run:
+```
+docker compose exec mongo-1 mongosh 127.0.0.1:27001/coordinator
+use admin
+var cfg = rs.conf()
+cfg.members = [{ _id: 0, host: "mongo-1:27001" }]
+rs.reconfig(cfg, {force: true})
+```
