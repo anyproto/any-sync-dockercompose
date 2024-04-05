@@ -3,13 +3,15 @@ version: "3.9"
 services:
   mongo-1:
     image: "mongo:${MONGO_VERSION}"
-    environment:
-      MONGO_INITDB_REPLICA_SET_NAME: ${MONGO_REPLICA_SET}
     command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
     volumes:
       - ./storage/mongo-1/:/data/db
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --port ${MONGO_1_PORT} --quiet
+      interval: 10s
+      start_period: 30s
 
   redis:
     image: "redis/redis-stack-server:${REDIS_VERSION}"
