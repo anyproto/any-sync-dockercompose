@@ -86,11 +86,11 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
   ```
 
 * run client (GUI)
-  
-  Use `<pathToRepo>/any-sync-dockercompose/etc/client.yml` as a network configuration for the clients.
+  Download client for [desktop](https://download.anytype.io/)
+  Use `<pathToRepo>/etc/client.yml` as a network configuration for the clients.
   See [the documentation](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks) for more details.
 
-* run client (CLI) 
+* run client (CLI)
   ```
   # macos example
   ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=$(pwd)/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
