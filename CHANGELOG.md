@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
-## Unreleased
+## [v3.0.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v3.0.0) - 2024-04-05
 
-<small>[Compare with latest](https://github.com/anyproto/any-sync-dockercompose/compare/v2.1.2...HEAD)</small>
+<small>[Compare with v2.1.2](https://github.com/anyproto/any-sync-dockercompose/compare/v2.1.2...v3.0.0)</small>
 
 ### Added
 
@@ -19,7 +19,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - fix replica init command ([5339177](https://github.com/anyproto/any-sync-dockercompose/commit/5339177c69f9a67d24458aab0af6d81c7148e426) by Kirill Shklyaev).
 - fix status 'unhealthy' in mongo replset configuration ([75eb15b](https://github.com/anyproto/any-sync-dockercompose/commit/75eb15ba344cec35d14880a78bd14a961218989a) by Kirill Shklyaev).
 
-<!-- insertion marker -->
 ## [v2.1.2](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v2.1.2) - 2024-02-19
 
 <small>[Compare with v2.1.1](https://github.com/anyproto/any-sync-dockercompose/compare/v2.1.1...v2.1.2)</small>
