@@ -1,7 +1,7 @@
 mongo:
     connect: %MONGO_CONNECT%/?w=majority
     database: consensus
-    log: log
+    logCollection: log
 
 drpc:
   stream:

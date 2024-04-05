@@ -82,7 +82,7 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 * run client (CLI) 
   ```
   # macos example
-  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=<pathToRepo>/any-sync-dockercompose/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
+  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=$(pwd)/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
   ```
 
 ## configuration

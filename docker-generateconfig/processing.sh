@@ -3,77 +3,51 @@
 source generateconfig/.env
 
 # Set file paths
-dest_path="etc"
-network_file="${dest_path}/network.yml"
+DEST_PATH="etc"
+NETWORK_FILE="${DEST_PATH}/network.yml"
 
 # Create directories for all node types
-for node_type in node-1 node-2 node-3 filenode coordinator consensusnode admin; do
-    mkdir -p "${dest_path}/any-sync-${node_type}"
+for NODE_TYPE in node-1 node-2 node-3 filenode coordinator consensusnode admin; do
+    mkdir -p "${DEST_PATH}/any-sync-${NODE_TYPE}"
 done
 
 # Create directory for aws credentials
-mkdir -p "${dest_path}/.aws"
+mkdir -p "${DEST_PATH}/.aws"
 
 # add external listen host
 ./setListenIp.py "${EXTERNAL_LISTEN_HOST}" "generateconfig/nodes.yml"
 
 # create config for clients
-cp "generateconfig/nodes.yml" "${dest_path}/client.yml"
+cp "generateconfig/nodes.yml" "${DEST_PATH}/client.yml"
 
 # Generate network file
-sed 's|^|    |; 1s|^|network:\n|' "generateconfig/nodes.yml" > "${network_file}"
+sed 's|^|    |; 1s|^|network:\n|' "generateconfig/nodes.yml" > "${NETWORK_FILE}"
 
 # Generate config files for 3 nodes
 for i in {0..2}; do
-    node_file="${dest_path}/any-sync-node-$((i+1))/config.yml"
-    cat "${network_file}" tmp-etc/common.yml generateconfig/account${i}.yml tmp-etc/node-$((i+1)).yml > "${node_file}"
+    cat "${NETWORK_FILE}" tmp-etc/common.yml generateconfig/account${i}.yml tmp-etc/node-$((i+1)).yml > "${DEST_PATH}/any-sync-node-$((i+1))/config.yml"
 done
 
 # Generate config files for coordinator, filenode, consensusnode
-cat "${network_file}" tmp-etc/common.yml generateconfig/account3.yml tmp-etc/coordinator.yml > ${dest_path}/any-sync-coordinator/config.yml
-cat "${network_file}" tmp-etc/common.yml generateconfig/account4.yml tmp-etc/filenode.yml > ${dest_path}/any-sync-filenode/config.yml
-cat "${network_file}" tmp-etc/common.yml generateconfig/account5.yml tmp-etc/consensusnode.yml > ${dest_path}/any-sync-consensusnode/config.yml
+cat "${NETWORK_FILE}" tmp-etc/common.yml generateconfig/account3.yml tmp-etc/coordinator.yml > ${DEST_PATH}/any-sync-coordinator/config.yml
+cat "${NETWORK_FILE}" tmp-etc/common.yml generateconfig/account4.yml tmp-etc/filenode.yml > ${DEST_PATH}/any-sync-filenode/config.yml
+cat "${NETWORK_FILE}" tmp-etc/common.yml generateconfig/account5.yml tmp-etc/consensusnode.yml > ${DEST_PATH}/any-sync-consensusnode/config.yml
 
 # Copy network file to coordinator directory
-cp "generateconfig/nodes.yml" "${dest_path}/any-sync-coordinator/network.yml"
+cp "generateconfig/nodes.yml" "${DEST_PATH}/any-sync-coordinator/network.yml"
 
 # Generate any-sync-admin config
-cp "tmp-etc/admin.yml" ${dest_path}/any-sync-admin/config.yml
+cp "tmp-etc/admin.yml" ${DEST_PATH}/any-sync-admin/config.yml
 
 # Generate aws credentials
-cp "tmp-etc/aws-credentials" ${dest_path}/.aws/credentials
+cp "tmp-etc/aws-credentials" ${DEST_PATH}/.aws/credentials
 
-# Replace placeholders for aws credentials
-placeholders=( "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
-for placeholder in "${placeholders[@]}"; do
-    perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${dest_path}/"/.aws/credentials
-done
-
-# Replace placeholders in config files
-for node_type in node_1 node_2 node_3 coordinator filenode consensusnode; do
-    addresses="ANY_SYNC_${node_type^^}_ADDRESSES"
-    quic_addresses="ANY_SYNC_${node_type^^}_QUIC_ADDRESSES"
-    perl -i -pe "s|%${addresses}%|${!addresses}|g" "${network_file}" "${dest_path}/"/*/*.yml
-    perl -i -pe "s|%${quic_addresses}%|${!quic_addresses}|g" "${network_file}" "${dest_path}/"/*/*.yml
-done
-
-# Replace other placeholders
-placeholders=(
-    "MONGO_CONNECT"
-    "MONGO_URL"
-    "REDIS_URL"
-    "MINIO_PORT"
-    "MINIO_BUCKET"
-    "ANY_SYNC_COORDINATOR_FILE_LIMIT_DEFAULT"
-    "ANY_SYNC_COORDINATOR_FILE_LIMIT_ALPHA_USERS"
-    "ANY_SYNC_COORDINATOR_FILE_LIMIT_NIGHTLY_USERS"
-    "ANY_SYNC_ADMIN_HOST"
-    "ANY_SYNC_ADMIN_PORT"
-    "REDIS_HOST"
-    "REDIS_PORT"
-)
-for placeholder in "${placeholders[@]}"; do
-    perl -i -pe "s|%${placeholder}%|${!placeholder}|g" "${network_file}" "${dest_path}/"/*/*.yml
+# Replace variables from .env file
+for PLACEHOLDER in $( perl -ne 'print "$1\n" if /^([A-z0-9_-]+)=/' generateconfig/.env ); do
+    perl -i -pe "s|%${PLACEHOLDER}%|${!PLACEHOLDER}|g" \
+        "${DEST_PATH}/"/.aws/credentials \
+        "${NETWORK_FILE}" \
+        "${DEST_PATH}/"/*/*.yml
 done
 
 # save generated configs
