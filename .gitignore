@@ -1,4 +1,7 @@
+.DS_Store
 /etc/
 /storage/
 /docker-compose.override.yml
 /repos/
+/.env
+/.env.override

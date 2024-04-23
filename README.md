@@ -12,6 +12,7 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 - [Prepare](#prepare)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
 - [Compatible versions](#compatible-versions)
 - [Local build](#local-build)
 - [Limits web admin](#limits-web-admin)
@@ -36,8 +37,8 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
   git config --global core.autocrlf false
 
   # Generate config
-  docker build -t generateconfig -f Dockerfile-generateconfig .
-  docker run --rm -v ${PWD}/etc:/opt/processing/etc --name any-sync-generator generateconfig
+  docker buildx build --tag generateconfig-env --file Dockerfile-generateconfig-env .
+  docker run --rm --volume ${PWD}/:/code/ generateconfig-env
   # Run containers
   docker compose up -d
   ```
@@ -96,10 +97,38 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
   ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=$(pwd)/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
   ```
 
-## configuration
-Use file .env
-* Set specific versions: find and edit variables with suffix "_VERSION"
-* Set external listen host: default 127.0.0.1, for change you need edit variable "EXTERNAL_LISTEN_HOST"
+## Configuration
+> [!WARNING]
+> The .env file is generated automatically.
+It is based on the .env.common file, which is overridden or extended by variables from the .env.override file.
+### Version control
+By default, we use "prod" image version for any-sync-* daemons.  
+Also you can use "stage1" or "latest" verions:
+```
+# for use stage1 version
+ln -F -s .env.override.stage1 .env.override
+# for use latest version
+ln -F -s .env.override.latest .env.override
+```
+### external listen host
+By default, we use only the listen address 127.0.0.1, which is sufficient for running tests and a local client.  
+If you need to connect external clients, please add "EXTERNAL_LISTEN_HOSTS" in .env.override file.  
+Use spaces separation, multiline is not supported. For example:
+```
+EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2 ...
+```
+
+## Troubleshooting & FAQ
+### mongo replica set error
+if you have mongo replica set error like this:
+```
+test> rs.status()
+MongoServerError: Our replica set config is invalid or we are not a member of it
+```
+please run command:
+```
+docker compose exec mongo-1 mongosh --port 27001 --eval 'rs.reconfig({_id: rs.conf()._id, members: [{ _id: 0, host: "mongo-1:27001" }]}, {force: true});'
+```
 
 ## Compatible versions
 You can find compatible versions on these pages:
@@ -121,6 +150,8 @@ If you need to create local build binaries for any-sync-*, you can do so by usin
   ```
   make restart
   ```
+
+ln -F -s .env.override.stage1 .env.override
 
 ## Limits web admin
 open link in browser: http://127.0.0.1:80

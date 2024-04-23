@@ -4,8 +4,9 @@
 import sys
 import yaml
 
-listenHost = sys.argv[1]
-yamlFile = sys.argv[2]
+arguments = sys.argv[1:]
+yamlFile = arguments[0]
+listenHosts = arguments[1:]
 
 with open(yamlFile, 'r') as file:
     config = yaml.load(file,Loader=yaml.Loader)
@@ -13,9 +14,10 @@ with open(yamlFile, 'r') as file:
 for index, nodes in enumerate(config['nodes']):
     addresses = nodes['addresses']
     port = addresses[0].split(':')[1]
-    listenAddress = listenHost +':'+ port
-    if listenAddress not in addresses:
-        addresses.append(listenAddress)
+    for listenHost in listenHosts:
+        listenAddress = listenHost +':'+ port
+        if listenAddress not in addresses:
+            addresses.append(listenAddress)
 
 with open(yamlFile, 'w') as file:
     yaml.dump(config, file)

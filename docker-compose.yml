@@ -1,7 +1,31 @@
 version: "3.9"
 
 services:
+  # generate configs using the anyconf utility
+  generateconfig-anyconf:
+    image: generateconfig-anyconf
+    build:
+      context: .
+      dockerfile: Dockerfile-generateconfig-anyconf
+    volumes:
+      - ./:/code
+
+  # processing any-sync-* configs
+  generateconfig-processing:
+    depends_on:
+      generateconfig-anyconf:
+        condition: service_healthy
+    image: generateconfig-processing
+    build:
+      context: .
+      dockerfile: Dockerfile-generateconfig-processing
+    volumes:
+      - ./:/code
+
   mongo-1:
+    depends_on:
+      generateconfig-processing:
+        condition: service_healthy
     image: "mongo:${MONGO_VERSION}"
     command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
     ports:
@@ -9,11 +33,14 @@ services:
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate() }" | mongosh --port ${MONGO_1_PORT} --quiet
+      test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]})} catch(e) {rs.status().ok}") -eq 1
       interval: 10s
       start_period: 30s
 
   redis:
+    depends_on:
+      generateconfig-processing:
+        condition: service_healthy
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
@@ -64,16 +91,24 @@ services:
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      - mongo-1
+      generateconfig-processing:
+        condition: service_healthy
+      mongo-1:
+        condition: service_healthy
     volumes:
       - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
     restart: no
-    command: bash -c "sleep 10; /bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
+    command: bash -c "/bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
 
   any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      - any-sync-coordinator_bootstrap
+      generateconfig-processing:
+        condition: service_healthy
+      mongo-1:
+        condition: service_healthy
+      any-sync-coordinator_bootstrap:
+        condition: service_completed_successfully
     ports:
       - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
       - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}"
@@ -86,14 +121,16 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 10; /bin/any-sync-coordinator -c /etc/any-sync-coordinator/config.yml"
 
   any-sync-filenode:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
-      - redis
-      - minio
-      - any-sync-coordinator
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      any-sync-coordinator:
+        condition: service_started
     ports:
       - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
       - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}"
@@ -107,12 +144,12 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 15; /bin/any-sync-filenode -c /etc/any-sync-filenode/config.yml"
 
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
-      - any-sync-coordinator
+      any-sync-coordinator:
+        condition: service_started
     ports:
       - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
       - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}"
@@ -127,12 +164,12 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
 
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
-      - any-sync-coordinator
+      any-sync-coordinator:
+        condition: service_started
     ports:
       - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
       - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}"
@@ -147,12 +184,12 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
 
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
-      - any-sync-coordinator
+      any-sync-coordinator:
+        condition: service_started
     ports:
       - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
       - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}"
@@ -167,12 +204,12 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 15; /bin/any-sync-node -c /etc/any-sync-node/config.yml"
 
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
     depends_on:
-      - any-sync-coordinator
+      any-sync-coordinator:
+        condition: service_started
     ports:
       - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
       - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}"
@@ -185,7 +222,6 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-    command: bash -c "sleep 15; /bin/any-sync-consensusnode -c /etc/any-sync-consensusnode/config.yml"
 
   any-sync-admin:
     image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
