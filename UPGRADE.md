@@ -37,3 +37,8 @@ After Upgrade please run:
 ```
 docker compose exec mongo-1 mongosh --port 27001 --eval 'rs.reconfig({_id: rs.conf()._id, members: [{ _id: 0, host: "mongo-1:27001" }]}, {force: true});'
 ```
+
+## Upgrading from v3.x.x to v4.x.x
+1. You need to transfer your modifications from the .env file to the .env.override file.
+2. The variable EXTERNAL_LISTEN_HOST is deprecated.
+   Please, use the variable EXTERNAL_LISTEN_HOSTS instead.

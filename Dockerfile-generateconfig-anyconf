@@ -1,0 +1,12 @@
+# syntax=docker/dockerfile:1
+FROM golang:1.21.6-alpine3.19
+RUN apk add --no-cache bash yq
+RUN go install github.com/anyproto/any-sync-tools/anyconf@latest
+WORKDIR /code
+HEALTHCHECK \
+    --start-period=3s \
+    --retries=20 \
+    --interval=10s \
+    --timeout=3s \
+    CMD echo 'HEALTHCHECK' | nc 127.0.0.1 8000 | grep -q HEALTHCHECK
+ENTRYPOINT ./docker-generateconfig/anyconf.sh
