@@ -151,8 +151,6 @@ If you need to create local build binaries for any-sync-*, you can do so by usin
   make restart
   ```
 
-ln -F -s .env.override.stage1 .env.override
-
 ## Limits web admin
 open link in browser: http://127.0.0.1:80
 
