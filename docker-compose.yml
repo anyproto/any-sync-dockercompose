@@ -57,17 +57,17 @@ services:
   minio:
     image: "minio/minio:${MINIO_VERSION}"
     restart: always
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":${MINIO_WEB_PORT}" --address ":${MINIO_PORT}"
     environment:
       MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
       MINIO_ROOT_PASSWORD: "${AWS_SECRET_ACCESS_KEY}"
     ports:
-      - "${MINIO_PORT}:9000"
-      - "${MINIO_WEB_PORT}:9001"
+      - "${EXTERNAL_MINIO_PORT}:${MINIO_PORT}"
+      - "${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
     volumes:
       - ./storage/minio:/data
     healthcheck:
-      test: bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
+      test: bash -c ':> /dev/tcp/127.0.0.1/${MINIO_PORT}' || exit 1
       interval: 5s
       timeout: 10s
       retries: 3
