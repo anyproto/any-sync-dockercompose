@@ -6,7 +6,7 @@ source .env
 
 # Set file paths
 DEST_PATH="./etc"
-NETWORK_FILE="${DEST_PATH}/network.yml"
+NETWORK_FILE="./storage/docker-generateconfig/network.yml"
 
 echo "INFO: Create directories for all node types"
 for NODE_TYPE in node-1 node-2 node-3 filenode coordinator consensusnode admin; do
@@ -17,14 +17,13 @@ echo "INFO: Create directory for aws credentials"
 mkdir -p "${DEST_PATH}/.aws"
 
 echo "INFO: Configure external listen host"
-./docker-generateconfig/setListenIp.py "./storage/docker-generateconfig/nodes.yml" ${EXTERNAL_LISTEN_HOST} ${EXTERNAL_LISTEN_HOSTS}
+./docker-generateconfig/setListenIp.py "./storage/docker-generateconfig/nodes.yml" "./storage/docker-generateconfig/nodesProcessed.yml"
 
 echo "INFO: Create config for clients"
-cp "./storage/docker-generateconfig/nodes.yml" "${DEST_PATH}/client.yml"
+cp "./storage/docker-generateconfig/nodesProcessed.yml" "${DEST_PATH}/client.yml"
 
 echo "INFO: Generate network file"
-#sed 's|^|    |; 1s|^|network:\n|' "generateconfig/nodes.yml" > "${NETWORK_FILE}"
-yq eval '. as $item | {"network": $item}' --indent 2 ./storage/docker-generateconfig/nodes.yml > "${NETWORK_FILE}"
+yq eval '. as $item | {"network": $item}' --indent 2 ./storage/docker-generateconfig/nodesProcessed.yml > "${NETWORK_FILE}"
 
 echo "INFO: Generate config files for 3 nodes"
 for i in {0..2}; do
@@ -47,7 +46,7 @@ cat "${NETWORK_FILE}" docker-generateconfig/etc/common.yml storage/docker-genera
     > ${DEST_PATH}/any-sync-consensusnode/config.yml
 
 echo "INFO: Copy network file to coordinator directory"
-cp "storage/docker-generateconfig/nodes.yml" "${DEST_PATH}/any-sync-coordinator/network.yml"
+cp "storage/docker-generateconfig/nodesProcessed.yml" "${DEST_PATH}/any-sync-coordinator/network.yml"
 
 echo "INFO: Copy any-sync-admin config"
 cp "docker-generateconfig/etc/admin.yml" "${DEST_PATH}/any-sync-admin/config.yml"
