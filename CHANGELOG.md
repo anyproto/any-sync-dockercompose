@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## Unreleased
+
+<small>[Compare with latest](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.2...HEAD)</small>
+
+<!-- insertion marker -->
+## [v4.0.2](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.2) - 2024-04-26
+
+<small>[Compare with v4.0.1](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.1...v4.0.2)</small>
+
+### Added
+
+- added EXTERNAL_MINIO_PORT and EXTERNAL_MINIO_WEB_PORT ([9888da2](https://github.com/anyproto/any-sync-dockercompose/commit/9888da2f607114315789698119e11e9e1dc67f05) by Grigory Efimov).
+
+## [v4.0.1](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.1) - 2024-04-26
+
+<small>[Compare with v4.0.0](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.0...v4.0.1)</small>
+
+### Fixed
+
+- Fixed the generation of QUIC protocol listening addresses ([ed0520b](https://github.com/anyproto/any-sync-dockercompose/commit/ed0520b39d2e90b1e019c978a0d86c4764f1cda9) by Grigory Efimov).
+
+## [v4.0.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.0) - 2024-04-23
+
+<small>[Compare with v3.0.0](https://github.com/anyproto/any-sync-dockercompose/compare/v3.0.0...v4.0.0)</small>
+
+### Added
+
+- added support prod,stage1 versions for ghcr docker images ([a9b8cfc](https://github.com/anyproto/any-sync-dockercompose/commit/a9b8cfc4295784f917ef3cf6a691da253be7fb21) by Grigory Efimov).
+
+### Changed
+
+- CHANGELOG.md update ([c5fb241](https://github.com/anyproto/any-sync-dockercompose/commit/c5fb241eb79a884246ff4b3ad71881c9c0fea25c) by Grigory Efimov).
+
 ## [v3.0.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v3.0.0) - 2024-04-05
 
 <small>[Compare with v2.1.2](https://github.com/anyproto/any-sync-dockercompose/compare/v2.1.2...v3.0.0)</small>
