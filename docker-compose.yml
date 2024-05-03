@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # generate configs using the anyconf utility
   generateconfig-anyconf:
