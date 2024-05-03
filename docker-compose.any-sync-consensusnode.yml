@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   any-sync-consensusnode:
     image: localbuild-consensusnode
