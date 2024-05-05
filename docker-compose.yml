@@ -78,7 +78,7 @@ services:
     image: minio/mc:latest
     environment:
       MC_HOST_minio: http://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio:${MINIO_PORT}
-    restart: no
+    restart: "no"
     depends_on:
       - minio
     entrypoint:
@@ -95,7 +95,7 @@ services:
         condition: service_healthy
     volumes:
       - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
-    restart: no
+    restart: "no"
     command: bash -c "/bin/any-sync-confapply -c /etc/any-sync-coordinator/config.yml -n /etc/any-sync-coordinator/network.yml -e"
 
   any-sync-coordinator:
