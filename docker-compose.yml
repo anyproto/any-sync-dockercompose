@@ -31,7 +31,7 @@ services:
     volumes:
       - ./storage/mongo-1/:/data/db
     healthcheck:
-      test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]})} catch(e) {rs.status().ok}") -eq 1
+      test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.status().ok || rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]}).ok} catch(e) {rs.status().ok}" | grep -v asio.system) -eq 1
       interval: 10s
       start_period: 30s
 
