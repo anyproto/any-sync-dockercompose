@@ -8,7 +8,30 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > [!WARNING]
 > Before upgrading please read [Upgrade-Guide](../../wiki/Upgrade-Guide)
 
-## The documentation for using this repository is in the [wiki](../../wiki)
+## Documentation
+All of the documentation for this repository is located in the [Wiki](../../wiki).  
+Please visit the Wiki for comprehensive guides, installation instructions and more.
+
+## Getting Started
+To get started, follow these steps:
+
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/anyproto/any-sync-dockercompose.git
+    ```
+2. **Navigate to the project directory:**
+    ```bash
+    cd any-sync-dockercompose
+    ```
+3. **Install the necessary dependencies:**
+    You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
+4. **Run the project:**
+    ```bash
+    # Example command to start
+    make start
+    ```
+
+For detailed instructions, please refer to the [Usage Guide](../../wiki/Usage) in the Wiki.
 
 ## Contribution
 Thank you for your desire to develop Anytype together!
