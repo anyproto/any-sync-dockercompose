@@ -15,7 +15,6 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 - [Troubleshooting](#troubleshooting)
 - [Compatible versions](#compatible-versions)
 - [Local build](#local-build)
-- [Limits web admin](#limits-web-admin)
 - [Upgrading](#upgrading)
 - [Changelog](#changelog)
 - [Contribution](#contribution)
@@ -150,9 +149,6 @@ If you need to create local build binaries for any-sync-*, you can do so by usin
   ```
   make restart
   ```
-
-## Limits web admin
-open link in browser: http://127.0.0.1:80
 
 ## Upgrading
 For detailed instructions of upgrading to the latest version, please see the [UPGRADE.md](./UPGRADE.md) file.
