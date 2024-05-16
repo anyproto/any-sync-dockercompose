@@ -27,7 +27,6 @@ To get started, follow these steps:
     You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
 4. **Run the project:**
     ```bash
-    # Example command to start
     make start
     ```
 
