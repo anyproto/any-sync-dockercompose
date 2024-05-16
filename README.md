@@ -6,17 +6,14 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > If you plan to self-host a heavily used any-sync network, please consider other options.
 
 > [!WARNING]
-> Before upgrading please read [UPGRADE.md](./UPGRADE.md)
+> Before upgrading please read [Upgrade-Guide](../../wiki/Upgrade-Guide)
 
-## [Usage](../../wiki/)
+## [Usage](../../wiki/Usage)
 ## [Configuration](../../wiki/Configuration)
 ## [Troubleshooting & FAQ](../../wiki/Troubleshooting-&-FAQ)
 ## [Compatible versions](../../wiki/Compatible-versions)
 ## [Local build](../../wiki/Local-build)
-
-## Upgrading
-For detailed instructions of upgrading to the latest version, please see the [Upgrade-Guide](../../wiki/Upgrade-Guide) file.
-
+## [Upgrading](../../wiki/Upgrade-Guide)
 ## Changelog
 For a detailed list of changes in each version, check out the [CHANGELOG.md](./CHANGELOG.md) file.  
 For auto generate CHANGELOG.md file please use commands:
