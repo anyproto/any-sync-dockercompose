@@ -8,19 +8,7 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > [!WARNING]
 > Before upgrading please read [Upgrade-Guide](../../wiki/Upgrade-Guide)
 
-## [Usage](../../wiki/Usage)
-## [Configuration](../../wiki/Configuration)
-## [Troubleshooting & FAQ](../../wiki/Troubleshooting-&-FAQ)
-## [Compatible versions](../../wiki/Compatible-versions)
-## [Local build](../../wiki/Local-build)
-## [Upgrading](../../wiki/Upgrade-Guide)
-## Changelog
-For a detailed list of changes in each version, check out the [CHANGELOG.md](./CHANGELOG.md) file.  
-For auto generate CHANGELOG.md file please use commands:
-```
-pip install git-changelog
-git-changelog --output CHANGELOG.md
-```
+## The documentation for using this repository is in the [wiki](../../wiki)
 
 ## Contribution
 Thank you for your desire to develop Anytype together!
