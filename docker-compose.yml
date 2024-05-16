@@ -220,14 +220,3 @@ services:
         limits:
           memory: 500M
     restart: on-failure
-
-  any-sync-admin:
-    image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
-    depends_on:
-      - redis
-      - mongo-1
-    ports:
-      - "${EXTERNAL_ANY_SYNC_ADMIN_PORT}:${ANY_SYNC_ADMIN_PORT}"
-    volumes:
-      - ./etc/any-sync-admin/:/etc/any-sync-admin/
-    restart: on-failure

@@ -7,7 +7,7 @@ generate_env:
 		generateconfig-env
 
 start: generate_env
-	docker compose up -d
+	docker compose up --detach --remove-orphans
 	@echo "Done! Upload your self-hosted network configuration file ${CURDIR}/etc/client.yml into the client app"
 	@echo "See: https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks"
 
@@ -21,9 +21,9 @@ pull:
 	docker compose pull
 
 down:
-	docker compose down
+	docker compose down --remove-orphans
 logs:
-	docker compose logs -f
+	docker compose logs --follow
 
 # build with "plain" log for debug
 build:
