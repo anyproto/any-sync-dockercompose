@@ -117,17 +117,7 @@ Use spaces separation, multiline is not supported. For example:
 EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2 ...
 ```
 
-## Troubleshooting & FAQ
-### mongo replica set error
-if you have mongo replica set error like this:
-```
-test> rs.status()
-MongoServerError: Our replica set config is invalid or we are not a member of it
-```
-please run command:
-```
-docker compose exec mongo-1 mongosh --port 27001 --eval 'rs.reconfig({_id: rs.conf()._id, members: [{ _id: 0, host: "mongo-1:27001" }]}, {force: true});'
-```
+## [Troubleshooting & FAQ](../../wiki/Troubleshooting-&-FAQ#mongodb-requires-a-cpu-with-avx-support)
 
 ## Compatible versions
 You can find compatible versions on these pages:
