@@ -23,7 +23,7 @@ To get started, follow these steps:
     ```bash
     cd any-sync-dockercompose
     ```
-3. **Install the necessary dependencies:**
+3. **Install the necessary dependencies:**  
     You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
 4. **Run the project:**
     ```bash
