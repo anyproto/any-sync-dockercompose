@@ -8,140 +8,14 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > [!WARNING]
 > Before upgrading please read [UPGRADE.md](./UPGRADE.md)
 
-## Table of Contents
-- [Prepare](#prepare)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Troubleshooting](#troubleshooting)
-- [Compatible versions](#compatible-versions)
-- [Local build](#local-build)
-- [Upgrading](#upgrading)
-- [Changelog](#changelog)
-- [Contribution](#contribution)
-
-## Prepare
-* install docker and docker-compose https://docs.docker.com/compose/install/linux/
-
-## Usage
-* start stand - at the first run the directories `etc/` of configuration files and `storage/` for data storage will be generated:
-
-  For Linux, MacOS and other nix* systems:
-  ```
-  make start
-  ```
-  For Windows (Run this in PowerShell, not cmd.exe):
-  ```
-  # Disable auto convert LF to CRLF
-  # !!! run BEFORE clone repo !!!
-  git config --global core.autocrlf false
-
-  # Generate config
-  docker buildx build --tag generateconfig-env --file Dockerfile-generateconfig-env .
-  docker run --rm --volume ${PWD}/:/code/ generateconfig-env
-  # Run containers
-  docker compose up -d
-  ```
-* stop stand:
-  ```
-  make stop
-  ```
-* restart stand:
-  ```
-  make restart
-  ```
-* update image versions and start:
-  ```
-  make update
-  ```
-* clean unused docker objects:
-  ```
-  make clean
-  ```
-* clean config and storage files - deleting data for redis, mongo, s3, any-sync-*:
-  ```
-  make cleanEtcStorage
-  ```
-* show logs:
-  ```
-  docker-compose logs -f any-sync-node
-  docker-compose logs -f any-sync-filenode
-  docker-compose logs -f
-  ```
-* attach to container:
-  ```
-  docker compose exec mongo-1 bash
-  docker compose exec any-sync-node-1 bash
-  docker compose exec any-sync-coordinator bash
-  ```
-
-* restart certain container:
-  ```
-  docker compose restart any-sync-node-1
-  ```
-
-* get current network config
-  ```
-  docker compose exec mongo-1 mongosh 127.0.0.1:27001/coordinator
-  db.getMongo().setReadPref('primaryPreferred'); db.nodeConf.find().sort( { _id: -1 } ).limit(1)
-  ```
-
-* run client (GUI)
-  Download client for [desktop](https://download.anytype.io/)
-  Use `<pathToRepo>/etc/client.yml` as a network configuration for the clients.
-  See [the documentation](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks) for more details.
-
-* run client (CLI)
-  ```
-  # macos example
-  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=$(pwd)/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
-  ```
-
-## Configuration
-> [!WARNING]
-> The .env file is generated automatically.
-It is based on the .env.common file, which is overridden or extended by variables from the .env.override file.
-### Version control
-By default, we use "prod" image version for any-sync-* daemons.  
-Also you can use "stage1" or "latest" verions:
-```
-# for use stage1 version
-ln -F -s .env.override.stage1 .env.override
-# for use latest version
-ln -F -s .env.override.latest .env.override
-```
-### external listen host
-By default, we use only the listen address 127.0.0.1, which is sufficient for running tests and a local client.  
-If you need to connect external clients, please add "EXTERNAL_LISTEN_HOSTS" in .env.override file.  
-Use spaces separation, multiline is not supported. For example:
-```
-EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2 ...
-```
-
-## [Troubleshooting & FAQ](../../wiki/Troubleshooting-&-FAQ#mongodb-requires-a-cpu-with-avx-support)
-
-## Compatible versions
-You can find compatible versions on these pages:
-* stable versions, used in [production](https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/)
-* unstable versions, used in [test stand](https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/)
-
-## Local build
-If you need to create local build binaries for any-sync-*, you can do so by using the "overrides" functionality in docker-compose.
-
-* clone repos
-  ```
-  install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
-  ```
-* to create a symlink for the "override file," you can either create it yourself as docker-compose.override.yml or use an existing one
-  ```
-  ln -F -s docker-compose.any-sync-node-1.yml docker-compose.override.yml
-  ```
-* restart docker compose
-  ```
-  make restart
-  ```
+## [Usage](../../wiki/)
+## [Configuration](../../wiki/Configuration)
+## [Troubleshooting & FAQ](../../wiki/Troubleshooting-&-FAQ)
+## [Compatible versions](../../wiki/Compatible-versions)
+## [Local build](../../wiki/Local-build)
 
 ## Upgrading
-For detailed instructions of upgrading to the latest version, please see the [UPGRADE.md](./UPGRADE.md) file.
+For detailed instructions of upgrading to the latest version, please see the [Upgrade-Guide](../../wiki/Upgrade-Guide) file.
 
 ## Changelog
 For a detailed list of changes in each version, check out the [CHANGELOG.md](./CHANGELOG.md) file.  
