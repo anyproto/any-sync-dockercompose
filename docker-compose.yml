@@ -231,3 +231,20 @@ services:
     volumes:
       - ./etc/any-sync-admin/:/etc/any-sync-admin/
     restart: on-failure
+
+  # any-sync-netcheck
+  netcheck:
+    depends_on:
+      - any-sync-consensusnode
+      - any-sync-filenode
+      - any-sync-coordinator
+      - any-sync-node-1
+      - any-sync-node-2
+      - any-sync-node-3
+    image: netcheck
+    build:
+      context: .
+      dockerfile: Dockerfile-netcheck
+    volumes:
+      - ./:/code
+    tty: true
