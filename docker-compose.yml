@@ -41,13 +41,13 @@ services:
         condition: service_healthy
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
-    command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
+    command: redis-server --port ${REDIS_PORT} --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ./storage/redis/:/data/
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: [ "CMD", "redis-cli", "--raw", "-p", "${REDIS_PORT}", "incr", "ping" ]
       interval: 10s
       timeout: 30s
       retries: 3
