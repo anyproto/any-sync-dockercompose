@@ -6,11 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
-## Unreleased
+## [v4.0.3](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.3) - 2024-05-17
 
-<small>[Compare with latest](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.2...HEAD)</small>
+<small>[Compare with v4.0.2](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.2...v4.0.3)</small>
 
-<!-- insertion marker -->
+### Fixed
+
+- fixed docker-generateconfig/setListenIp.py ([be138fa](https://github.com/anyproto/any-sync-dockercompose/commit/be138faf23b96310429b83d02d9b85f270070320) by Grigory Efimov).
+- fixed README.md ([249adb5](https://github.com/anyproto/any-sync-dockercompose/commit/249adb5850c4d77c818d7702250f3c996007de9b) by Grigory Efimov).
+- fix README.md ([bbd2765](https://github.com/anyproto/any-sync-dockercompose/commit/bbd27650e10cd43e35bd9eb8a1a13df706c4d411) by Grigory Efimov).
+- Fix UDP ports mapping ([ea4bd98](https://github.com/anyproto/any-sync-dockercompose/commit/ea4bd985ae57c7b6793e5a3850cc1356196afe62) by CzBiX).
+
+### Removed
+
+- removed any-sync-admin ([7b57295](https://github.com/anyproto/any-sync-dockercompose/commit/7b57295ff34ec62306356a2726ddf63c43c7d3aa) by Grigory Efimov).
+- Remove version from docker as it is deprecated ([d97f23f](https://github.com/anyproto/any-sync-dockercompose/commit/d97f23f266a52fc562c136dea6b6871a60066050) by Grigory Efimov).
+
 ## [v4.0.2](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.2) - 2024-04-26
 
 <small>[Compare with v4.0.1](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.1...v4.0.2)</small>
