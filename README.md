@@ -6,164 +6,31 @@ Self-host for any-sync, designed for personal usage or for review and testing pu
 > If you plan to self-host a heavily used any-sync network, please consider other options.
 
 > [!WARNING]
-> Before upgrading please read [UPGRADE.md](./UPGRADE.md)
+> Before upgrading please read [Upgrade-Guide](../../wiki/Upgrade-Guide)
 
-## Table of Contents
-- [Prepare](#prepare)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Troubleshooting](#troubleshooting)
-- [Compatible versions](#compatible-versions)
-- [Local build](#local-build)
-- [Limits web admin](#limits-web-admin)
-- [Upgrading](#upgrading)
-- [Changelog](#changelog)
-- [Contribution](#contribution)
+## Documentation
+All of the documentation for this repository is located in the [Wiki](../../wiki).  
+Please visit the Wiki for comprehensive guides, installation instructions and more.
 
-## Prepare
-* install docker and docker-compose https://docs.docker.com/compose/install/linux/
+## Getting Started
+To get started, follow these steps:
 
-## Usage
-* start stand - at the first run the directories `etc/` of configuration files and `storage/` for data storage will be generated:
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/anyproto/any-sync-dockercompose.git
+    ```
+2. **Navigate to the project directory:**
+    ```bash
+    cd any-sync-dockercompose
+    ```
+3. **Install the necessary dependencies:**  
+    You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
+4. **Run the project:**
+    ```bash
+    make start
+    ```
 
-  For Linux, MacOS and other nix* systems:
-  ```
-  make start
-  ```
-  For Windows (Run this in PowerShell, not cmd.exe):
-  ```
-  # Disable auto convert LF to CRLF
-  # !!! run BEFORE clone repo !!!
-  git config --global core.autocrlf false
-
-  # Generate config
-  docker buildx build --tag generateconfig-env --file Dockerfile-generateconfig-env .
-  docker run --rm --volume ${PWD}/:/code/ generateconfig-env
-  # Run containers
-  docker compose up -d
-  ```
-* stop stand:
-  ```
-  make stop
-  ```
-* restart stand:
-  ```
-  make restart
-  ```
-* update image versions and start:
-  ```
-  make update
-  ```
-* clean unused docker objects:
-  ```
-  make clean
-  ```
-* clean config and storage files - deleting data for redis, mongo, s3, any-sync-*:
-  ```
-  make cleanEtcStorage
-  ```
-* show logs:
-  ```
-  docker-compose logs -f any-sync-node
-  docker-compose logs -f any-sync-filenode
-  docker-compose logs -f
-  ```
-* attach to container:
-  ```
-  docker compose exec mongo-1 bash
-  docker compose exec any-sync-node-1 bash
-  docker compose exec any-sync-coordinator bash
-  ```
-
-* restart certain container:
-  ```
-  docker compose restart any-sync-node-1
-  ```
-
-* get current network config
-  ```
-  docker compose exec mongo-1 mongosh 127.0.0.1:27001/coordinator
-  db.getMongo().setReadPref('primaryPreferred'); db.nodeConf.find().sort( { _id: -1 } ).limit(1)
-  ```
-
-* run client (GUI)
-  Download client for [desktop](https://download.anytype.io/)
-  Use `<pathToRepo>/etc/client.yml` as a network configuration for the clients.
-  See [the documentation](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks) for more details.
-
-* run client (CLI)
-  ```
-  # macos example
-  ANYTYPE_LOG_LEVEL="*=DEBUG" ANYPROF=:6060 ANY_SYNC_NETWORK=$(pwd)/etc/client.yml /Applications/Anytype.app/Contents/MacOS/Anytype
-  ```
-
-## Configuration
-> [!WARNING]
-> The .env file is generated automatically.
-It is based on the .env.common file, which is overridden or extended by variables from the .env.override file.
-### Version control
-By default, we use "prod" image version for any-sync-* daemons.  
-Also you can use "stage1" or "latest" verions:
-```
-# for use stage1 version
-ln -F -s .env.override.stage1 .env.override
-# for use latest version
-ln -F -s .env.override.latest .env.override
-```
-### external listen host
-By default, we use only the listen address 127.0.0.1, which is sufficient for running tests and a local client.  
-If you need to connect external clients, please add "EXTERNAL_LISTEN_HOSTS" in .env.override file.  
-Use spaces separation, multiline is not supported. For example:
-```
-EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2 ...
-```
-
-## Troubleshooting & FAQ
-### mongo replica set error
-if you have mongo replica set error like this:
-```
-test> rs.status()
-MongoServerError: Our replica set config is invalid or we are not a member of it
-```
-please run command:
-```
-docker compose exec mongo-1 mongosh --port 27001 --eval 'rs.reconfig({_id: rs.conf()._id, members: [{ _id: 0, host: "mongo-1:27001" }]}, {force: true});'
-```
-
-## Compatible versions
-You can find compatible versions on these pages:
-* stable versions, used in [production](https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/)
-* unstable versions, used in [test stand](https://puppetdoc.anytype.io/api/v1/stage1-any-sync-compatible-versions/)
-
-## Local build
-If you need to create local build binaries for any-sync-*, you can do so by using the "overrides" functionality in docker-compose.
-
-* clone repos
-  ```
-  install -d repos && for REPO in any-sync-{node,filenode,coordinator,consensusnode}; do if [[ ! -d repos/$REPO ]]; then git clone git@github.com:anyproto/${REPO}.git repos/$REPO; fi; done
-  ```
-* to create a symlink for the "override file," you can either create it yourself as docker-compose.override.yml or use an existing one
-  ```
-  ln -F -s docker-compose.any-sync-node-1.yml docker-compose.override.yml
-  ```
-* restart docker compose
-  ```
-  make restart
-  ```
-
-## Limits web admin
-open link in browser: http://127.0.0.1:80
-
-## Upgrading
-For detailed instructions of upgrading to the latest version, please see the [UPGRADE.md](./UPGRADE.md) file.
-
-## Changelog
-For a detailed list of changes in each version, check out the [CHANGELOG.md](./CHANGELOG.md) file.  
-For auto generate CHANGELOG.md file please use commands:
-```
-pip install git-changelog
-git-changelog --output CHANGELOG.md
-```
+For detailed instructions, please refer to the [Usage Guide](../../wiki/Usage) in the Wiki.
 
 ## Contribution
 Thank you for your desire to develop Anytype together!

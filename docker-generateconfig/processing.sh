@@ -9,7 +9,7 @@ DEST_PATH="./etc"
 NETWORK_FILE="./storage/docker-generateconfig/network.yml"
 
 echo "INFO: Create directories for all node types"
-for NODE_TYPE in node-1 node-2 node-3 filenode coordinator consensusnode admin; do
+for NODE_TYPE in node-1 node-2 node-3 filenode coordinator consensusnode; do
     mkdir -p "${DEST_PATH}/any-sync-${NODE_TYPE}"
 done
 
@@ -47,9 +47,6 @@ cat "${NETWORK_FILE}" docker-generateconfig/etc/common.yml storage/docker-genera
 
 echo "INFO: Copy network file to coordinator directory"
 cp "storage/docker-generateconfig/nodesProcessed.yml" "${DEST_PATH}/any-sync-coordinator/network.yml"
-
-echo "INFO: Copy any-sync-admin config"
-cp "docker-generateconfig/etc/admin.yml" "${DEST_PATH}/any-sync-admin/config.yml"
 
 echo "INFO: Copy aws credentials config"
 cp "docker-generateconfig/etc/aws-credentials" "${DEST_PATH}/.aws/credentials"

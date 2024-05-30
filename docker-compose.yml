@@ -41,13 +41,13 @@ services:
         condition: service_healthy
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
-    command: redis-server --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
+    command: redis-server --port ${REDIS_PORT} --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ./storage/redis/:/data/
     healthcheck:
-      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      test: [ "CMD", "redis-cli", "--raw", "-p", "${REDIS_PORT}", "incr", "ping" ]
       interval: 10s
       timeout: 30s
       retries: 3
@@ -109,7 +109,7 @@ services:
         condition: service_completed_successfully
     ports:
       - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
-      - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}"
+      - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}/udp"
       - 8005:8000
     volumes:
       - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
@@ -131,7 +131,7 @@ services:
         condition: service_started
     ports:
       - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
-      - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}"
+      - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}/udp"
       - 8004:8000
     volumes:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
@@ -150,7 +150,7 @@ services:
         condition: service_started
     ports:
       - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
-      - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}"
+      - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}/udp"
       - 8081:8080
       - 8001:8000
     volumes:
@@ -170,7 +170,7 @@ services:
         condition: service_started
     ports:
       - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
-      - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}"
+      - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}/udp"
       - 8082:8080
       - 8002:8000
     volumes:
@@ -190,7 +190,7 @@ services:
         condition: service_started
     ports:
       - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
-      - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}"
+      - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}/udp"
       - 8083:8080
       - 8003:8000
     volumes:
@@ -210,7 +210,7 @@ services:
         condition: service_started
     ports:
       - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
-      - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}"
+      - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}/udp"
       - 8006:8000
     volumes:
       - ./etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
@@ -219,17 +219,6 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
-
-  any-sync-admin:
-    image: "ghcr.io/anyproto/any-sync-admin:${ANY_SYNC_ADMIN_VERSION}"
-    depends_on:
-      - redis
-      - mongo-1
-    ports:
-      - "${EXTERNAL_ANY_SYNC_ADMIN_PORT}:${ANY_SYNC_ADMIN_PORT}"
-    volumes:
-      - ./etc/any-sync-admin/:/etc/any-sync-admin/
     restart: on-failure
 
   # any-sync-netcheck

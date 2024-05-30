@@ -27,9 +27,16 @@ else:
 
 inputYamlFile = sys.argv[1]
 outputYamlFile = sys.argv[2]
-listenHosts = envVars['EXTERNAL_LISTEN_HOSTS'].split()
-if 'EXTERNAL_LISTEN_HOST' in envVars:
-    listenHosts.append(envVars['EXTERNAL_LISTEN_HOST'])
+externalListenHosts = envVars.get('EXTERNAL_LISTEN_HOSTS', '127.0.0.1').split()
+externalListenHost = envVars.get('EXTERNAL_LISTEN_HOST', None)
+print(f"DEBUG: externalListenHosts={externalListenHosts}")
+print(f"DEBUG: externalListenHost={externalListenHost}")
+listenHosts = list()
+for externalListenHost in externalListenHosts:
+    if externalListenHost not in listenHosts:
+        listenHosts.append(externalListenHost)
+if externalListenHost not in listenHosts:
+    listenHosts.append(externalListenHost)
 
 print(f"DEBUG: listenHosts={listenHosts}")
 
@@ -49,6 +56,9 @@ for index, nodes in enumerate(config['nodes']):
         # add "quic" listen address
         for name,value in envVars.items():
             if re.match(r"^(ANY_SYNC_.*_PORT)$", name) and value == listenPort:
+                if re.match(r"^(ANY_SYNC_.*_QUIC_PORT)$", name):
+                    # skip port, if PORT == QUIC_PORT
+                    continue
                 quicPortKey = name.replace('_PORT', '_QUIC_PORT')
                 quicPortValue = envVars[quicPortKey]
                 quicListenAddress = 'quic://'+ nodeListenHost +':'+ str(quicPortValue)
