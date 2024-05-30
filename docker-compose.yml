@@ -223,6 +223,7 @@ services:
 
   # any-sync-netcheck
   netcheck:
+    image: "ghcr.io/anyproto/any-sync-tools:${ANY_SYNC_TOOLS_VERSION}"
     depends_on:
       - any-sync-consensusnode
       - any-sync-filenode
@@ -230,10 +231,11 @@ services:
       - any-sync-node-1
       - any-sync-node-2
       - any-sync-node-3
-    image: netcheck
-    build:
-      context: .
-      dockerfile: Dockerfile-netcheck
     volumes:
       - ./:/code
+    command: "tail -f /dev/null"
     tty: true
+    healthcheck:
+      test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -P 'netcheck\s+success'
+      interval: 60s
+      start_period: 5s
