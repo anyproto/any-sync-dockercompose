@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v4.1.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.1.0) - 2024-05-31
+
+<small>[Compare with v4.0.3](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.3...v4.1.0)</small>
+
+### Added
+
+- added Dockerfile-netcheck ([c3a7407](https://github.com/anyproto/any-sync-dockercompose/commit/c3a7407958247bb8ae12d97c8e544bda7609f999) by Grigory Efimov).
+
+### Fixed
+
+- fix Dockerfile-netcheck ([339bfda](https://github.com/anyproto/any-sync-dockercompose/commit/339bfda8f220a1018946d7d1b0a931aae047b409) by Grigory Efimov).
+
 ## [v4.0.3](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.0.3) - 2024-05-17
 
 <small>[Compare with v4.0.2](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.2...v4.0.3)</small>
