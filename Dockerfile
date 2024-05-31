@@ -1,4 +1,4 @@
-FROM golang:1.19
+FROM golang:1.22
 
 ARG REPO_DIR=.
 
