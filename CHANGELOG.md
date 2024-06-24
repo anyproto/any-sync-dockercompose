@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v5.0.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v5.0.0) - 2024-06-24
+
+<small>[Compare with v4.1.0](https://github.com/anyproto/any-sync-dockercompose/compare/v4.1.0...v5.0.0)</small>
+
+### Added
+
+- added STORAGE_DIR ([ed0667d](https://github.com/anyproto/any-sync-dockercompose/commit/ed0667d7c312cc351312fc8cfa11b0d551b9348d) by Grigory Efimov).
+
 ## [v4.1.0](https://github.com/anyproto/any-sync-dockercompose/releases/tag/v4.1.0) - 2024-05-31
 
 <small>[Compare with v4.0.3](https://github.com/anyproto/any-sync-dockercompose/compare/v4.0.3...v4.1.0)</small>
