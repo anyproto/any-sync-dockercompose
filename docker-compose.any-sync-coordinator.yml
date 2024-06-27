@@ -1,6 +1,5 @@
 services:
   any-sync-coordinator:
-    image: localbuild-coordinator
     build:
       context: .
       dockerfile: Dockerfile

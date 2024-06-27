@@ -1,6 +1,5 @@
 services:
   any-sync-consensusnode:
-    image: localbuild-consensusnode
     build:
       context: .
       dockerfile: Dockerfile
