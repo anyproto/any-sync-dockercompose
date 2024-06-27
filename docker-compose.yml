@@ -1,7 +1,6 @@
 services:
   # generate configs using the anyconf utility
   generateconfig-anyconf:
-    image: generateconfig-anyconf
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-anyconf
@@ -14,7 +13,6 @@ services:
     depends_on:
       generateconfig-anyconf:
         condition: service_healthy
-    image: generateconfig-processing
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-processing

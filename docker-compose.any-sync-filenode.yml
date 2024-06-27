@@ -1,6 +1,5 @@
 services:
   any-sync-filenode:
-    image: localbuild-filenode
     build:
       context: .
       dockerfile: Dockerfile
