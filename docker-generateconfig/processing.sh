@@ -65,5 +65,3 @@ for FILE in $( find ${DEST_PATH}/ -name "*.yml" ); do
 done
 
 echo "INFO: $0 done"
-echo "INFO: starting nc as status service"
-nc -lk -p 8000 -e /bin/cat
