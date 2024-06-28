@@ -56,5 +56,3 @@ yq --indent 2 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" acco
 yq --indent 2 --inplace ".account.signingKey |= \"${NETWORK_SIGNING_KEY}\"" account5.yml
 
 echo "INFO: $0 done"
-echo "INFO: starting nc as status service"
-nc -lk -p 8000 -e /bin/cat

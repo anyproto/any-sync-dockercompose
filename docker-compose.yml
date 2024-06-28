@@ -12,7 +12,7 @@ services:
   generateconfig-processing:
     depends_on:
       generateconfig-anyconf:
-        condition: service_healthy
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-processing
@@ -23,7 +23,7 @@ services:
   mongo-1:
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
     command: --replSet ${MONGO_REPLICA_SET} --port ${MONGO_1_PORT}
     ports:
@@ -38,7 +38,7 @@ services:
   redis:
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: redis-server --port ${REDIS_PORT} --dir /data/ --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction --protected-mode no --loadmodule /opt/redis-stack/lib/redisbloom.so
@@ -90,7 +90,7 @@ services:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
     volumes:
@@ -102,7 +102,7 @@ services:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
       any-sync-coordinator_bootstrap:
