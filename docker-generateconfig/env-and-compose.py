@@ -86,7 +86,8 @@ with open(cfg['outputEnvFile'], 'w') as file:
 
 # generate docker-compose.yml
 nodes = {key.split('_')[3] for key in envVars.keys() if key.startswith('ANY_SYNC_NODE_') and key.endswith('_HOST')}
+fileDevStore = 'ANY_SYNC_FILENODE_USE_DEV' in envVars
 j2 = Environment(loader=FileSystemLoader('.')).get_template(cfg['templateComposeFile'])
-rendered = j2.render({'nodes': nodes})
+rendered = j2.render({'nodes': nodes, 'fileDevStore': fileDevStore})
 with open(cfg['outputComposeFile'], 'w') as f:
     f.write(rendered)

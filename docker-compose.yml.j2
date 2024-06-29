@@ -52,6 +52,7 @@ services:
       timeout: 30s
       retries: 3
 
+{% if not fileDevStore %}
   minio:
     image: "minio/minio:${MINIO_VERSION}"
     restart: always
@@ -74,6 +75,7 @@ services:
       default:
         aliases:
           - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
+{% endif %}
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
@@ -110,12 +112,20 @@ services:
     restart: on-failure
 
   any-sync-filenode:
+{% if fileDevStore %}
+    build:
+      context: .
+      dockerfile: Dockerfile-filenode-dev
+{% else %}
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
+{% endif %}
     depends_on:
       redis:
         condition: service_healthy
+{% if not fileDevStore %}
       minio:
         condition: service_healthy
+{% endif %}
       any-sync-coordinator:
         condition: service_started
     ports:
@@ -126,6 +136,9 @@ services:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
       - ./etc/.aws:/root/.aws:ro
       - "${STORAGE_DIR}/networkStore/any-sync-filenode/:/networkStore/"
+{% if fileDevStore %}
+      - "${STORAGE_DIR}/fileDevStore:/fileDevStore"
+{% endif %}
     deploy:
       resources:
         limits:
@@ -178,8 +191,10 @@ services:
     depends_on:
       - any-sync-consensusnode
       - any-sync-filenode
-      - any-sync-coordinator{% for node in nodes %}
-      - any-sync-node-{{ node }}{% endfor %}
+      - any-sync-coordinator
+{% for node in nodes %}
+      - any-sync-node-{{ node }}
+{% endfor %}
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"

@@ -1,0 +1,13 @@
+FROM golang:bookworm as builder
+
+WORKDIR /usr/src/app
+
+RUN latest_version=$(curl -s https://api.github.com/repos/anyproto/any-sync-filenode/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")') && \
+  git clone --depth=1 -b $latest_version https://github.com/anyproto/any-sync-filenode && \
+  cd any-sync-filenode && \
+  go mod download && go mod verify && \
+  go build -x -v -trimpath -ldflags "-s -w" -buildvcs=false -o /usr/local/bin/any-sync-filenode -tags dev ./cmd
+
+FROM "ghcr.io/anyproto/any-sync-filenode:latest"
+
+COPY --from=builder /usr/local/bin/any-sync-filenode /bin/any-sync-filenode

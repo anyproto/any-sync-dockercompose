@@ -7,6 +7,9 @@ s3Store:
     endpoint: http://minio:%MINIO_PORT%
     forcePathStyle: true # 'true' for self-hosted S3 Object Storage
 
+fileDevStore:
+    path: /fileDevStore
+
 redis:
     isCluster: false
     url: %REDIS_URL%
