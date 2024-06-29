@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-anyconf
-    stop_signal: SIGKILL
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"
@@ -13,11 +12,10 @@ services:
   generateconfig-processing:
     depends_on:
       generateconfig-anyconf:
-        condition: service_healthy
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-processing
-    stop_signal: SIGKILL
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"
@@ -25,7 +23,7 @@ services:
   mongo-1:
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
     command: ["--replSet", "${MONGO_REPLICA_SET}", "--port", "${MONGO_1_PORT}"]
     ports:
@@ -40,7 +38,7 @@ services:
   redis:
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: ["redis-server", "--port", "${REDIS_PORT}", "--dir", "/data/", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/redisbloom.so"]
@@ -61,35 +59,27 @@ services:
     environment:
       MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
       MINIO_ROOT_PASSWORD: "${AWS_SECRET_ACCESS_KEY}"
+      MC_HOST_minio: http://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio:${MINIO_PORT}
     ports:
       - "${EXTERNAL_MINIO_PORT}:${MINIO_PORT}"
       - "${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
     volumes:
       - "${STORAGE_DIR}/minio:/data"
     healthcheck:
-      test: bash -c ':> /dev/tcp/127.0.0.1/${MINIO_PORT}' || exit 1
-      interval: 5s
-      timeout: 10s
+      test: bash -c 'mc version info "minio/${MINIO_BUCKET}" || mc mb "minio/${MINIO_BUCKET}"'
+      interval: 10s
+      timeout: 5s
       retries: 3
     networks:
       default:
         aliases:
           - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
 
-  create-bucket:
-    image: minio/mc:latest
-    environment:
-      MC_HOST_minio: http://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio:${MINIO_PORT}
-    restart: "no"
-    depends_on:
-      - minio
-    command: [ "mc", "mb", "minio/${MINIO_BUCKET}"]
-
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
     volumes:
@@ -101,7 +91,7 @@ services:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       generateconfig-processing:
-        condition: service_healthy
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
       any-sync-coordinator_bootstrap:
@@ -142,65 +132,27 @@ services:
           memory: 500M
     restart: on-failure
 
-  any-sync-node-1:
+{% for node in nodes %}
+  any-sync-node-{{ node }}:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
     depends_on:
       any-sync-coordinator:
         condition: service_started
     ports:
-      - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
-      - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}/udp"
-      - 8081:8080
-      - 8001:8000
+      - "${ANY_SYNC_NODE_{{ node }}_PORT}:${ANY_SYNC_NODE_{{ node }}_PORT}"
+      - "${ANY_SYNC_NODE_{{ node }}_QUIC_PORT}:${ANY_SYNC_NODE_{{ node }}_QUIC_PORT}/udp"
+      - 81{{ '%02d' % node | int }}:8080
+      - 82{{ '%02d' % node | int }}:8000
     volumes:
-      - ./etc/any-sync-node-1/:/etc/any-sync-node/
-      - "${STORAGE_DIR}/any-sync-node-1/:/storage/"
-      - "${STORAGE_DIR}/networkStore/any-sync-node-1/:/networkStore/"
+      - ./etc/any-sync-node-{{ node }}/:/etc/any-sync-node/
+      - "${STORAGE_DIR}/any-sync-node-{{ node }}/:/storage/"
+      - "${STORAGE_DIR}/networkStore/any-sync-node-{{ node }}/:/networkStore/"
     deploy:
       resources:
         limits:
           memory: 500M
     restart: on-failure
-
-  any-sync-node-2:
-    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on:
-      any-sync-coordinator:
-        condition: service_started
-    ports:
-      - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
-      - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}/udp"
-      - 8082:8080
-      - 8002:8000
-    volumes:
-      - ./etc/any-sync-node-2/:/etc/any-sync-node/
-      - "${STORAGE_DIR}/any-sync-node-2/:/storage/"
-      - "${STORAGE_DIR}/networkStore/any-sync-node-2/:/networkStore/"
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    restart: on-failure
-
-  any-sync-node-3:
-    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on:
-      any-sync-coordinator:
-        condition: service_started
-    ports:
-      - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
-      - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}/udp"
-      - 8083:8080
-      - 8003:8000
-    volumes:
-      - ./etc/any-sync-node-3/:/etc/any-sync-node/
-      - "${STORAGE_DIR}/any-sync-node-3/:/storage/"
-      - "${STORAGE_DIR}/networkStore/any-sync-node-3/:/networkStore/"
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    restart: on-failure
+{% endfor %}
 
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
@@ -226,10 +178,8 @@ services:
     depends_on:
       - any-sync-consensusnode
       - any-sync-filenode
-      - any-sync-coordinator
-      - any-sync-node-1
-      - any-sync-node-2
-      - any-sync-node-3
+      - any-sync-coordinator{% for node in nodes %}
+      - any-sync-node-{{ node }}{% endfor %}
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"
