@@ -5,11 +5,14 @@ import os
 import json
 import requests
 import re
+from jinja2 import Environment, FileSystemLoader
 
 cfg = {
-    'inputFile': '.env.common',
-    'overrideFile': '.env.override',
-    'outputFile': '.env',
+    'inputEnvFile': '.env.common',
+    'overrideEnvFile': '.env.override',
+    'outputEnvFile': '.env',
+    'templateComposeFile': 'docker-compose.yml.j2',
+    'outputComposeFile': 'docker-compose.yml',
     'overrideVarMap': {
         'ANY_SYNC_NODE_VERSION': 'pkg::any-sync-node',
         'ANY_SYNC_FILENODE_VERSION': 'pkg::any-sync-filenode',
@@ -24,22 +27,22 @@ cfg = {
 
 # load variables from inputFile
 envVars = dict()
-if os.path.exists(cfg['inputFile']) and os.path.getsize(cfg['inputFile']) > 0:
-    with open(cfg['inputFile']) as file:
+if os.path.exists(cfg['inputEnvFile']) and os.path.getsize(cfg['inputEnvFile']) > 0:
+    with open(cfg['inputEnvFile']) as file:
         for line in file:
             if line.startswith('#') or not line.strip():
                 continue
             key, value = line.strip().split('=', 1)
             if key in envVars:
-                print(f"WARNING: dublicate key={key} in env file={cfg['inputFile']}")
+                print(f"WARNING: dublicate key={key} in env file={cfg['inputEnvFile']}")
             envVars[key] = value
 else:
-    print(f"ERROR: file={cfg['inputFile']} not found or size=0")
+    print(f"ERROR: file={cfg['inputEnvFile']} not found or size=0")
     exit(1)
 
 # override variables from overrideFile
-if os.path.exists(cfg['overrideFile']) and os.path.getsize(cfg['overrideFile']) > 0:
-    with open(cfg['overrideFile']) as file:
+if os.path.exists(cfg['overrideEnvFile']) and os.path.getsize(cfg['overrideEnvFile']) > 0:
+    with open(cfg['overrideEnvFile']) as file:
         for line in file:
             if line.startswith('#') or not line.strip():
                 continue
@@ -77,6 +80,13 @@ for key,value in envVars.items():
                 envVars[key] = 'v'+str(lastVersionValue)
 
 # save in output file
-with open(cfg['outputFile'], 'w') as file:
+with open(cfg['outputEnvFile'], 'w') as file:
     for key, value in envVars.items():
         file.write(f"{key}={value}\n")
+
+# generate docker-compose.yml
+nodes = {key.split('_')[3] for key in envVars.keys() if key.startswith('ANY_SYNC_NODE_') and key.endswith('_HOST')}
+j2 = Environment(loader=FileSystemLoader('.')).get_template(cfg['templateComposeFile'])
+rendered = j2.render({'nodes': nodes})
+with open(cfg['outputComposeFile'], 'w') as f:
+    f.write(rendered)
