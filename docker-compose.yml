@@ -83,7 +83,7 @@ services:
     restart: "no"
     depends_on:
       - minio
-    command: [ "mc", "mb", "minio/${MINIO_BUCKET}"]
+    entrypoint: ["mc", "mb", "minio/${MINIO_BUCKET}"]
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
