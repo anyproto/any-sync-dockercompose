@@ -3,4 +3,4 @@ FROM python:3.12-alpine
 WORKDIR /code
 COPY docker-generateconfig/env-requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-CMD ["sh", "-c", "python3 docker-generateconfig/env.py && python3 docker-generateconfig/generateTemplateAws.py"]
+ENTRYPOINT ["sh", "-c", "python3 docker-generateconfig/env.py && python3 docker-generateconfig/generateTemplateAws.py"]
