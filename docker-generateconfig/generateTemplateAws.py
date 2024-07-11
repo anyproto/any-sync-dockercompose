@@ -15,7 +15,8 @@ def get_env_var(key):
 env_vars = {
     'AWS_ACCESS_KEY_ID': os.getenv('AWS_ACCESS_KEY_ID'),
     'AWS_SECRET_ACCESS_KEY': os.getenv('AWS_SECRET_ACCESS_KEY'),
-    'EXTERNAL_LISTEN_HOSTS': os.getenv('EXTERNAL_LISTEN_HOSTS'),
+    'EXTERNAL_LISTEN_HOSTS': os.getenv('EXTERNAL_LISTEN_HOSTS', ''),
+    'EXTERNAL_LISTEN_HOST': os.getenv('EXTERNAL_LISTEN_HOST', ''),
     'ANY_SYNC_COORDINATOR_HOST': os.getenv('ANY_SYNC_COORDINATOR_HOST'),
     'ANY_SYNC_COORDINATOR_PORT': os.getenv('ANY_SYNC_COORDINATOR_PORT'),
     'ANY_SYNC_COORDINATOR_QUIC_PORT': os.getenv('ANY_SYNC_COORDINATOR_QUIC_PORT'),
@@ -39,7 +40,10 @@ env_vars = {
     'ANY_SYNC_NODE_3_HOST': os.getenv('ANY_SYNC_NODE_3_HOST'),
 }
 
-external_hosts = env_vars['EXTERNAL_LISTEN_HOSTS'].split(',')
+if env_vars['EXTERNAL_LISTEN_HOST']:
+    external_hosts = [env_vars['EXTERNAL_LISTEN_HOST']]
+else:
+    external_hosts = env_vars['EXTERNAL_LISTEN_HOSTS'].split(',')
 
 template = f"""
 external-addresses:
@@ -104,6 +108,6 @@ with open("docker-generateconfig/defaultTemplate.yml", "w") as file:
     file.write(template)
     logging.info("Template for `any-sync-network` written to ./docker-generateconfig/defaultTemplate.yml")
 
-with open("docker-generateconfig/.aws", "w") as aws_file:
+with open("docker-generateconfig/awsCredentials", "w") as aws_file:
     aws_file.write(f"[default]\naws_access_key_id={get_env_var('AWS_ACCESS_KEY_ID')}\naws_secret_access_key={get_env_var('AWS_SECRET_ACCESS_KEY')}\n")
-    logging.info("AWS credentials file written to ./docker-generateconfig/.aws")
+    logging.info("AWS credentials file written to ./docker-generateconfig/awsCredentials")
