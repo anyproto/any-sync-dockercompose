@@ -7,4 +7,4 @@
 /.env.override
 /docker-generateconfig/defaultTemplate.yml
 /docker-generateconfig/ids.yml
-/docker-generateconfig/.aws
+/docker-generateconfig/awsCredentials
