@@ -1,31 +1,17 @@
 services:
-  # generate configs using the anyconf utility
-  generateconfig-anyconf:
+  # generate configs using the any-sync-network utility
+  generateconfig:
     build:
       context: .
-      dockerfile: Dockerfile-generateconfig-anyconf
+      dockerfile: Dockerfile-generateconfig
     stop_signal: SIGKILL
     volumes:
       - ./:/code
-      - "${STORAGE_DIR}:/code/storage"
-
-  # processing any-sync-* configs
-  generateconfig-processing:
-    depends_on:
-      generateconfig-anyconf:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: Dockerfile-generateconfig-processing
-    stop_signal: SIGKILL
-    volumes:
-      - ./:/code
-      - "${STORAGE_DIR}:/code/storage"
 
   mongo-1:
     depends_on:
-      generateconfig-processing:
-        condition: service_healthy
+      generateconfig:
+        condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
     command: ["--replSet", "${MONGO_REPLICA_SET}", "--port", "${MONGO_1_PORT}"]
     ports:
@@ -39,8 +25,8 @@ services:
 
   redis:
     depends_on:
-      generateconfig-processing:
-        condition: service_healthy
+      generateconfig:
+        condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: always
     command: ["redis-server", "--port", "${REDIS_PORT}", "--dir", "/data/", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/redisbloom.so"]
@@ -90,8 +76,8 @@ services:
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
-        condition: service_healthy
+      generateconfig:
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
     volumes:
@@ -102,8 +88,8 @@ services:
   any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
-        condition: service_healthy
+      generateconfig:
+        condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
       any-sync-coordinator_bootstrap:
@@ -136,7 +122,7 @@ services:
       - 8004:8000
     volumes:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
-      - ./etc/.aws:/root/.aws:ro
+      - ./docker-generateconfig/awsCredentials:/root/.aws/credentials:ro
       - "${STORAGE_DIR}/networkStore/any-sync-filenode/:/networkStore/"
     deploy:
       resources:

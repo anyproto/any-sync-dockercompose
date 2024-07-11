@@ -2,9 +2,8 @@
 
 generate_env:
 	docker buildx build --tag generateconfig-env --file Dockerfile-generateconfig-env .
-	docker run --rm \
-		--volume ${CURDIR}/:/code/ \
-		generateconfig-env
+	docker run --rm --volume ${CURDIR}/:/code/ --detach generateconfig-env
+	sleep 2
 
 start: generate_env
 	docker compose up --detach --remove-orphans
@@ -33,5 +32,5 @@ restart: down start
 update: pull down start
 upgrade: down clean start
 
-cleanEtcStorage:
-	rm -rf etc/ storage/
+cleanConfStorage:
+	rm -rf etc/ storage/ docker-generateconfig/ids.yml docker-generateconfig/defaultTemplate.yml docker-generateconfig/awsCredentials
