@@ -29,14 +29,15 @@ inputYamlFile = sys.argv[1]
 outputYamlFile = sys.argv[2]
 externalListenHosts = envVars.get('EXTERNAL_LISTEN_HOSTS', '127.0.0.1').split()
 externalListenHost = envVars.get('EXTERNAL_LISTEN_HOST', None)
+if externalListenHost:
+    externalListenHosts = [externalListenHost]
+
 print(f"DEBUG: externalListenHosts={externalListenHosts}")
 print(f"DEBUG: externalListenHost={externalListenHost}")
 listenHosts = list()
-for externalListenHost in externalListenHosts:
-    if externalListenHost not in listenHosts:
-        listenHosts.append(externalListenHost)
-if externalListenHost not in listenHosts:
-    listenHosts.append(externalListenHost)
+for host in externalListenHosts:
+    if host not in listenHosts:
+        listenHosts.append(host)
 
 print(f"DEBUG: listenHosts={listenHosts}")
 
