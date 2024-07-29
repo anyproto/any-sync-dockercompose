@@ -9,4 +9,4 @@ HEALTHCHECK \
     --interval=10s \
     --timeout=3s \
     CMD echo 'HEALTHCHECK' | nc 127.0.0.1 8000 | grep -q HEALTHCHECK
-ENTRYPOINT ["/code/docker-generateconfig/anyconf.sh"]
+ENTRYPOINT ["bash", "/code/docker-generateconfig/anyconf.sh"]

@@ -3,4 +3,4 @@ FROM python:3.11-alpine
 WORKDIR /code
 COPY docker-generateconfig/env-requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-ENTRYPOINT ["/code/docker-generateconfig/env.py"]
+ENTRYPOINT ["python", "/code/docker-generateconfig/env.py"]
