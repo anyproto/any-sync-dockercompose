@@ -2,10 +2,4 @@
 FROM alpine:3.18.4
 RUN apk add --no-cache bash yq perl python3 py3-yaml
 WORKDIR /code
-HEALTHCHECK \
-    --start-period=3s \
-    --retries=10 \
-    --interval=5s \
-    --timeout=3s \
-    CMD echo 'HEALTHCHECK' | nc 127.0.0.1 8000 | grep -q HEALTHCHECK
 ENTRYPOINT ["bash", "/code/docker-generateconfig/processing.sh"]
