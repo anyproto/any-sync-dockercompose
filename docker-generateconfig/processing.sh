@@ -17,7 +17,7 @@ echo "INFO: Create directory for aws credentials"
 mkdir -p "${DEST_PATH}/.aws"
 
 echo "INFO: Configure external listen host"
-./docker-generateconfig/setListenIp.py "./storage/docker-generateconfig/nodes.yml" "./storage/docker-generateconfig/nodesProcessed.yml"
+python ./docker-generateconfig/setListenIp.py "./storage/docker-generateconfig/nodes.yml" "./storage/docker-generateconfig/nodesProcessed.yml"
 
 echo "INFO: Create config for clients"
 cp "./storage/docker-generateconfig/nodesProcessed.yml" "${DEST_PATH}/client.yml"
