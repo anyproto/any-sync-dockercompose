@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-anyconf
-    stop_signal: SIGKILL
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"
@@ -17,7 +16,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-processing
-    stop_signal: SIGKILL
     volumes:
       - ./:/code
       - "${STORAGE_DIR}:/code/storage"
