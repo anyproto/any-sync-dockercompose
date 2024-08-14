@@ -5,3 +5,4 @@
 /repos/
 /.env
 /.env.override
+/account_stop.json
