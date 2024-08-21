@@ -25,7 +25,14 @@ To get started, follow these steps:
     ```
 3. **Install the necessary dependencies:**  
     You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
-4. **Run the project:**
+4. **Configuration:**
+    For configuration, use the `.env.override` file.
+    For example, setting an external IP for listening:
+    ```
+    echo 'EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2' >> .env.override
+    ```
+    More information can be found [here](../../wiki/Configuration).
+5. **Run the project:**
     ```bash
     make start
     ```
