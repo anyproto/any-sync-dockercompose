@@ -25,7 +25,7 @@ To get started, follow these steps:
     ```
 3. **Install the necessary dependencies:**  
     You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
-4. **Configuration:**
+4. **Configuration:**  
     For configuration, use the `.env.override` file.
     For example, setting an external IP for listening:
     ```
