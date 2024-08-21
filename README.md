@@ -32,7 +32,7 @@ To get started, follow these steps:
     echo 'EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2' >> .env.override
     ```
     More information can be found [here](../../wiki/Configuration).
-4. **Run the project:**
+5. **Run the project:**
     ```bash
     make start
     ```
