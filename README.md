@@ -15,20 +15,20 @@ Please visit the Wiki for comprehensive guides, installation instructions and mo
 ## Getting Started
 To get started, follow these steps:
 
-1. **Clone the repository:**
+1. **Install the necessary dependencies:**  
+    You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
+2. **Clone the repository:**
     ```bash
     git clone https://github.com/anyproto/any-sync-dockercompose.git
     ```
-2. **Navigate to the project directory:**
+3. **Navigate to the project directory:**
     ```bash
     cd any-sync-dockercompose
     ```
-3. **Install the necessary dependencies:**  
-    You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
 4. **Configuration:**  
-    For configuration, use the `.env.override` file.
+    For configuration, use the `.env.override` file.  
     For example, setting an external IP for listening:
-    ```
+    ```bash
     echo 'EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2' >> .env.override
     ```
     More information can be found [here](../../wiki/Configuration).
