@@ -25,6 +25,7 @@ services:
       generateconfig-processing:
         condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
+    restart: always
     command: ["--replSet", "${MONGO_REPLICA_SET}", "--port", "${MONGO_1_PORT}"]
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
@@ -117,7 +118,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   any-sync-filenode:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
@@ -140,7 +141,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -160,7 +161,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -180,7 +181,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -200,7 +201,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
@@ -218,7 +219,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: always
 
   # any-sync-netcheck
   netcheck:
