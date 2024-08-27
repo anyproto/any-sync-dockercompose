@@ -224,6 +224,7 @@ services:
   # any-sync-netcheck
   netcheck:
     image: "ghcr.io/anyproto/any-sync-tools:${ANY_SYNC_TOOLS_VERSION}"
+    restart: always
     depends_on:
       - any-sync-consensusnode
       - any-sync-filenode
