@@ -25,6 +25,7 @@ services:
       generateconfig-processing:
         condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
+    restart: unless-stopped
     command: ["--replSet", "${MONGO_REPLICA_SET}", "--port", "${MONGO_1_PORT}"]
     ports:
       - "${MONGO_1_PORT}:${MONGO_1_PORT}"
@@ -40,7 +41,7 @@ services:
       generateconfig-processing:
         condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
-    restart: always
+    restart: unless-stopped
     command: ["redis-server", "--port", "${REDIS_PORT}", "--dir", "/data/", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/redisbloom.so"]
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
@@ -54,7 +55,7 @@ services:
 
   minio:
     image: "minio/minio:${MINIO_VERSION}"
-    restart: always
+    restart: unless-stopped
     command: ["server", "/data", "--console-address", ":${MINIO_WEB_PORT}", "--address", ":${MINIO_PORT}"]
     environment:
       MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
@@ -117,7 +118,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   any-sync-filenode:
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
@@ -140,7 +141,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   any-sync-node-1:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -160,7 +161,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   any-sync-node-2:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -180,7 +181,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   any-sync-node-3:
     image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
@@ -200,7 +201,7 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
@@ -218,11 +219,12 @@ services:
       resources:
         limits:
           memory: 500M
-    restart: on-failure
+    restart: unless-stopped
 
   # any-sync-netcheck
   netcheck:
     image: "ghcr.io/anyproto/any-sync-tools:${ANY_SYNC_TOOLS_VERSION}"
+    restart: unless-stopped
     depends_on:
       - any-sync-consensusnode
       - any-sync-filenode
