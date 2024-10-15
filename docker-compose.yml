@@ -117,7 +117,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   any-sync-filenode:
@@ -140,7 +140,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   any-sync-node-1:
@@ -160,7 +160,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   any-sync-node-2:
@@ -180,7 +180,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   any-sync-node-3:
@@ -200,7 +200,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   any-sync-consensusnode:
@@ -218,7 +218,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
   # any-sync-netcheck
