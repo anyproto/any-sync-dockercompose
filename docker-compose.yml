@@ -226,12 +226,11 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - ./:/code
-      - "${STORAGE_DIR}:/code/storage"
+      - ./etc/client.yml:/client.yml
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
     healthcheck:
-      test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -P 'netcheck\s+success'
+      test: any-sync-netcheck -c /client.yml 2>&1| grep -P 'netcheck\s+success'
       interval: 60s
       start_period: 5s
