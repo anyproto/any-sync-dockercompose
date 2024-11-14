@@ -2,8 +2,8 @@
 
 generate_env:
 	docker buildx build --load --tag generateconfig-env --file Dockerfile-generateconfig-env .
-	docker run --rm \
-		--volume ${CURDIR}/:/code/ \
+	docker run -l debug \
+		--volume ${CURDIR}/:/code/:Z \
 		generateconfig-env
 
 start: generate_env
