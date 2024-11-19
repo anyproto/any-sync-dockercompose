@@ -217,6 +217,7 @@ services:
   # any-sync-netcheck
   netcheck:
     image: "ghcr.io/anyproto/any-sync-tools:${ANY_SYNC_TOOLS_VERSION}"
+    pull_policy: always
     restart: unless-stopped
     depends_on:
       - any-sync-consensusnode
@@ -226,11 +227,11 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - ./etc/client.yml:/client.yml
+      - "${STORAGE_DIR}:/code/storage"
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
     healthcheck:
-      test: any-sync-netcheck -c /client.yml 2>&1| grep -P 'netcheck\s+success'
-      interval: 60s
+      test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -E 'netcheck\s+success'
+      interval: 10s
       start_period: 5s

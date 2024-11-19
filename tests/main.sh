@@ -1,153 +1,174 @@
 #!/bin/bash
 
 # Color codes for output
+BLUE='\033[1;34m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-source variables.txt
+DATE=$(date +%Y%m%d-%H%M%S)
+TESTS_DIR="$(dirname $0)"
+PROJECT_DIR="$TESTS_DIR/.."
+BACKUP_DIR="$PROJECT_DIR/backup/$DATE"
+DEBUG=false
 
-# Writes Any Sync ports to .env.override file
-setAnySyncPort() {
-  {
-    echo "ANY_SYNC_NODE_1_PORT=$ANY_SYNC_NODE_1_PORT"
-    echo "ANY_SYNC_NODE_2_PORT=$ANY_SYNC_NODE_2_PORT"
-    echo "ANY_SYNC_NODE_3_PORT=$ANY_SYNC_NODE_3_PORT"
-    echo "ANY_SYNC_COORDINATOR_PORT=$ANY_SYNC_COORDINATOR_PORT"
-    echo "ANY_SYNC_FILENODE_PORT=$ANY_SYNC_FILENODE_PORT"
-    echo "ANY_SYNC_CONSENSUSNODE_PORT=$ANY_SYNC_CONSENSUSNODE_PORT"
-  } > ../.env.override
-}
+# set make cmd
+if $DEBUG; then
+    MAKE="make -C $PROJECT_DIR"
+else
+    MAKE="make --quiet -C $PROJECT_DIR"
+fi
 
-# Sets the external listen host in .env.override
-setExternalListenHost() {
- echo "EXTERNAL_LISTEN_HOST=\"$EXTERNAL_LISTEN_HOST\"" > ../.env.override
-}
+# show variables
+if $DEBUG; then
+    echo -e "${YELLOW}Variables:${NC}"
+    cat <<EOF
+TESTS_DIR=$TESTS_DIR
+PROJECT_DIR=$PROJECT_DIR
+BACKUP_DIR=$BACKUP_DIR
+EOF
+fi
 
-# Sets multiple external listen hosts in .env.override
-setExternalListenHosts() {
-  echo "EXTERNAL_LISTEN_HOSTS=\"$EXTERNAL_LISTEN_HOSTS\"" > ../.env.override
-}
+# load variables
+source $TESTS_DIR/variables
 
-# Sets the default version for Any Sync components in .env.override
-setAnySyncVersionNumber() {
-  {
-    echo "ANY_SYNC_NODE_VERSION=${ANY_SYNC_NODE_VERSION[0]}"
-    echo "ANY_SYNC_FILENODE_VERSION=${ANY_SYNC_FILENODE_VERSION[0]}"
-    echo "ANY_SYNC_COORDINATOR_VERSION=${ANY_SYNC_COORDINATOR_VERSION[0]}"
-    echo "ANY_SYNC_CONSENSUSNODE_VERSION=${ANY_SYNC_CONSENSUSNODE_VERSION[0]}"
-  } > ../.env.override
-}
-
-# Sets production version for Any Sync components in .env.override
-setAnySyncVersionProd() {
-  {
-    echo "ANY_SYNC_NODE_VERSION=${ANY_SYNC_NODE_VERSION[1]}"
-    echo "ANY_SYNC_FILENODE_VERSION=${ANY_SYNC_FILENODE_VERSION[1]}"
-    echo "ANY_SYNC_COORDINATOR_VERSION=${ANY_SYNC_COORDINATOR_VERSION[1]}"
-    echo "ANY_SYNC_CONSENSUSNODE_VERSION=${ANY_SYNC_CONSENSUSNODE_VERSION[1]}"
-  } > ../.env.override
-}
-
-# Sets staging version for Any Sync components in .env.override
-setAnySyncVersionStage() {
-  {
-    echo "ANY_SYNC_NODE_VERSION=${ANY_SYNC_NODE_VERSION[2]}"
-    echo "ANY_SYNC_FILENODE_VERSION=${ANY_SYNC_FILENODE_VERSION[2]}"
-    echo "ANY_SYNC_COORDINATOR_VERSION=${ANY_SYNC_COORDINATOR_VERSION[2]}"
-    echo "ANY_SYNC_CONSENSUSNODE_VERSION=${ANY_SYNC_CONSENSUSNODE_VERSION[2]}"
-  } > ../.env.override
-}
-
-# Writes Minio port configurations to .env.override
-setMinioPort() {
-  {
-    echo "MINIO_PORT=$MINIO_PORT"
-    echo "EXTERNAL_MINIO_PORT=$EXTERNAL_MINIO_PORT"
-    echo "MINIO_WEB_PORT=$MINIO_WEB_PORT"
-    echo "EXTERNAL_MINIO_WEB_PORT=$EXTERNAL_MINIO_WEB_PORT"
-  } > ../.env.override
-}
+# record the start time in seconds since the epoch
+TEST_START_TIME=$(date +%s)
 
 # Checks network status of Any Sync services and displays result
 runNetcheck() {
-  sleep 7 # wait for netcheck to finish checking
-  if docker compose ps | grep -q "any-sync-dockercompose-netcheck-1.*healthy"; then
-    echo -e "\n${GREEN} Netcheck - OK [✔] ${NC}"
-  else
-    echo -e "\n${RED} Netcheck - FAILED [✖] ${NC}\n"
-    (cd .. && make down)
-    exit 1
-  fi
+    sleep 3
+    # wait for netcheck to finish checking
+    while true; do
+        STATUS=$( docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps --quiet netcheck) )
+        if [[ "$STATUS" != "starting" ]]; then
+            $DEBUG && echo "Container 'netcheck' health status: '$STATUS', continue"
+            break
+        else
+            $DEBUG && echo "Container 'netcheck' health status: '$STATUS', waiting..."
+            sleep 5
+        fi
+    done
+    if [[ "$STATUS" != "healthy" ]]; then
+        echo -e "${GREEN} Netcheck - OK [✔] ${NC}"
+    else
+        echo -e "${RED} Netcheck - FAILED [✖] ${NC}"
+        echo -e "${RED} Please investigate the issue. And after that, you can restore the previous storage state by executing the following commands:"
+        cat <<EOF
+$MAKE down && $MAKE cleanEtcStorage
+mv $BACKUP_DIR/etc $PROJECT_DIR/
+mv $BACKUP_DIR/storage $PROJECT_DIR/
+mv $BACKUP_DIR/.env.override $PROJECT_DIR/
+rmdir $BACKUP_DIR
+EOF
+        #restoreBackup
+        exit 1
+    fi
 }
 
 # Verifies if Minio bucket was created successfully
 checkBucketCreation() {
-  if docker compose logs create-bucket | grep -q "Bucket created successfully"; then
-    echo -e "\n${GREEN} Minio bucket creation - OK [✔] ${NC}"
-  else
-    echo -e "\n${RED} Minio bucket creation - FAILED [✖] ${NC}\n"
-    (cd .. && make down)
-    restoreBackup
-    exit 1
-  fi
-}
-
-createBackup() {
-  echo -e "\n\n${YELLOW}Pre-start user data backup...${NC}\n\n"
-  make -C ../ down
-  cp -r ../etc/ ../etc-back/
-  cp -r ../storage/ ../storage-back/
-  cp ../.env.override ../.env.override-back
+    if docker compose logs create-bucket | grep -q "Bucket created successfully"; then
+        echo -e "${GREEN} Minio bucket creation - OK [✔] ${NC}"
+    else
+        echo -e "${RED} Minio bucket creation - FAILED [✖] ${NC}"
+        restoreBackup
+        exit 1
+    fi
 }
 
 restoreBackup() {
-  echo -e "\n\n${YELLOW}Finish! Backup restore...${NC}\n\n"
-  make -C ../ down && make -C ../ cleanEtcStorage
-  mv ../etc-back/ ../etc/
-  mv ../storage-back/ ../storage/
-  mv ../.env.override-back ../.env.override
+    echo -e "${YELLOW}Finish! Backup restore...${NC}"
+    $MAKE down && $MAKE cleanEtcStorage
+    mv $BACKUP_DIR/etc $PROJECT_DIR/
+    mv $BACKUP_DIR/storage $PROJECT_DIR/
+    mv $BACKUP_DIR/.env.override $PROJECT_DIR/
+    rmdir $BACKUP_DIR
 }
 
-if [[ -e ../etc/ && -e ../storage/ && -e ../.env.override ]]; then
-  createBackup
-else
-  echo "User data doesn't exist, skipping backup..."
-fi
+runTest(){
+    local PARAM_1=$1
+    if [[ $PARAM_1 == 'cleanData' ]]; then
+        local CLEAN_DATA=true
+    else
+        local CLEAN_DATA=false
+    fi
 
-echo "Testing with user data storage..."
-for func in $(grep -oP '^set\w+' "$0" | grep -v '^setAnySyncPort'); do
-  echo -e "\n${YELLOW}Executing func: $func ${NC}\n"
-  $func
-  make -C ../ down && make -C ../ start
-  if [ $? -eq 0 ]; then
-    runNetcheck
-    echo -e "\n${GREEN} $func - OK [✔] ${NC}\n"
-  else
-    echo -e "\n${RED} $func - FAILED [✖] ${NC}\n"
-    make -C ../ down
-    restoreBackup
-    exit 1
-  fi
-done
+    if $CLEAN_DATA; then
+        echo -e "${YELLOW}Testing without user data storage...${NC}"
+    else
+        echo -e "${YELLOW}Testing with user data storage...${NC}"
+    fi
+    local RUN_TEST_START_TIME=$(date +%s) # record the start time in seconds since the epoch
+    for TEST in $TESTS_DIR/run.d/*.sh; do
+        echo -e "${YELLOW}Executing test: $TEST ${NC}"
+        local TEST_FILE_NAME=$(basename $TEST)
+        if [[ $TEST_FILE_NAME == 'setAnySyncPort.sh' ]]; then
+            if ! $CLEAN_DATA; then
+                echo "skipping for exist storage"
+                continue
+            fi
+        fi
 
-echo "Testing without user data storage..."
-for func in $(grep -oP '^set\w+' "$0"); do
-  echo -e "\n${YELLOW}Executing func: $func ${NC}\n"
-  $func
-  make -C ../ down && make -C ../ cleanEtcStorage && make -C ../ start
-  if [ $? -eq 0 ]; then
-    runNetcheck
-    checkBucketCreation
-    echo -e "\n${GREEN} $func - OK [✔] ${NC}\n"
-  else
-    echo -e "\n${RED} $func - FAILED [✖] ${NC}\n"
-    make -C ../ down
-    restoreBackup
-    exit 1
-  fi
-done
+        # record the start time in seconds since the epoch
+        local START_TIME=$(date +%s)
 
+        # source the test file
+        source $TEST
+
+        # restart stand
+        if $CLEAN_DATA; then
+            $MAKE down && $MAKE cleanEtcStorage && $MAKE start
+            local STATUS_CODE=$?
+        else
+            $MAKE down && $MAKE start
+            local STATUS_CODE=$?
+        fi
+
+        local END_TIME=$(date +%s) # record the end time in seconds since the epoch
+        local ELAPSED_TIME=$((END_TIME - START_TIME)) # calculate the elapsed time
+        echo -e "${BLUE}Test $TEST took $ELAPSED_TIME seconds to complete${NC}" # log the time taken for the test
+
+        # check 'make start' status
+        if [[ $STATUS_CODE -eq 0 ]]; then
+            # if successful, run checks
+            runNetcheck
+            if $CLEAN_DATA; then
+                checkBucketCreation
+            fi
+            echo -e "${GREEN} $TEST - OK [✔] ${NC}"
+        else
+            # if failed, log the error, stop services, restore backup, and exit
+            echo -e "${RED} $TEST - FAILED [✖] ${NC}"
+            $MAKE down
+            restoreBackup
+            exit 1
+        fi
+    done
+    local RUN_TEST_END_TIME=$(date +%s) # record the end time in seconds since the epoch
+    local RUN_TEST_ELAPSED_TIME=$((RUN_TEST_END_TIME - RUN_TEST_START_TIME)) # calculate the elapsed time
+    echo -e "${BLUE}runTest took $RUN_TEST_ELAPSED_TIME seconds to complete${NC}" # log the time taken for the test
+    echo
+}
+
+# create data backup
+echo -e "${YELLOW}Pre-start user data backup...${NC}"
+$MAKE down
+install -d $BACKUP_DIR
+cp -r $PROJECT_DIR/etc $BACKUP_DIR/
+cp -r $PROJECT_DIR/storage $BACKUP_DIR/
+cp $PROJECT_DIR/.env.override $BACKUP_DIR/
+
+# run tests
+runTest notCleanData
+runTest cleanData
+
+# restore backup and exit
 restoreBackup
+
+# logging run time
+TEST_END_TIME=$(date +%s) # record the end time in seconds since the epoch
+TEST_ELAPSED_TIME=$((TEST_END_TIME - TEST_START_TIME)) # calculate the elapsed time
+echo -e "${BLUE}$0 took $TEST_ELAPSED_TIME seconds to complete${NC}" # log the time taken for the test
 exit 0

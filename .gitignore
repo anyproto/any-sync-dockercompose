@@ -6,4 +6,4 @@
 /.env
 /.env.override
 /account_stop.json
-/tests/variables.txt
+/backup/
