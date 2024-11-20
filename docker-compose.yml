@@ -103,7 +103,7 @@ services:
     ports:
       - "${ANY_SYNC_COORDINATOR_PORT}:${ANY_SYNC_COORDINATOR_PORT}"
       - "${ANY_SYNC_COORDINATOR_QUIC_PORT}:${ANY_SYNC_COORDINATOR_QUIC_PORT}/udp"
-      - 8005:8000
+      - "${ANY_SYNC_COORDINATOR_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-coordinator/:/etc/any-sync-coordinator/
       - "${STORAGE_DIR}/networkStore/any-sync-coordinator/:/networkStore/"
@@ -125,7 +125,7 @@ services:
     ports:
       - "${ANY_SYNC_FILENODE_PORT}:${ANY_SYNC_FILENODE_PORT}"
       - "${ANY_SYNC_FILENODE_QUIC_PORT}:${ANY_SYNC_FILENODE_QUIC_PORT}/udp"
-      - 8004:8000
+      - "${ANY_SYNC_FILENODE_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-filenode/:/etc/any-sync-filenode/
       - ./etc/.aws:/root/.aws:ro
@@ -144,8 +144,8 @@ services:
     ports:
       - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
       - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}/udp"
-      - 8081:8080
-      - 8001:8000
+      - "${ANY_SYNC_NODE_1_API_SERVER_ADDR}:8080"
+      - "${ANY_SYNC_NODE_1_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-1/:/etc/any-sync-node/
       - "${STORAGE_DIR}/any-sync-node-1/:/storage/"
@@ -164,8 +164,8 @@ services:
     ports:
       - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
       - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}/udp"
-      - 8082:8080
-      - 8002:8000
+      - "${ANY_SYNC_NODE_2_API_SERVER_ADDR}:8080"
+      - "${ANY_SYNC_NODE_2_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-2/:/etc/any-sync-node/
       - "${STORAGE_DIR}/any-sync-node-2/:/storage/"
@@ -184,8 +184,8 @@ services:
     ports:
       - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
       - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}/udp"
-      - 8083:8080
-      - 8003:8000
+      - "${ANY_SYNC_NODE_3_API_SERVER_ADDR}:8080"
+      - "${ANY_SYNC_NODE_3_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-3/:/etc/any-sync-node/
       - "${STORAGE_DIR}/any-sync-node-3/:/storage/"
@@ -204,7 +204,7 @@ services:
     ports:
       - "${ANY_SYNC_CONSENSUSNODE_PORT}:${ANY_SYNC_CONSENSUSNODE_PORT}"
       - "${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}:${ANY_SYNC_CONSENSUSNODE_QUIC_PORT}/udp"
-      - 8006:8000
+      - "${ANY_SYNC_CONSENSUSNODE_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-consensusnode/:/etc/any-sync-consensusnode/
       - "${STORAGE_DIR}/networkStore/any-sync-consensusnode/:/networkStore/"
