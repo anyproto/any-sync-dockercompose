@@ -41,7 +41,7 @@ runNetcheck() {
     sleep 3
     # wait for netcheck to finish checking
     while true; do
-        STATUS=$( docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps --quiet netcheck) )
+        STATUS=$( docker inspect --format='{{json .State.Health.Status}}' $(docker compose ps --quiet netcheck) )
         if [[ "$STATUS" != "starting" ]]; then
             $DEBUG && echo "Container 'netcheck' health status: '$STATUS', continue"
             break
