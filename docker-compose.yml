@@ -33,6 +33,8 @@ services:
       test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]})} catch(e) {rs.status().ok}") -eq 1
       interval: 10s
       start_period: 30s
+    ports:
+      - "127.0.0.1:${MONGO_1_PORT}:${MONGO_1_PORT}"
 
   redis:
     depends_on:
@@ -48,6 +50,8 @@ services:
       interval: 10s
       timeout: 30s
       retries: 3
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:${REDIS_PORT}"
 
   minio:
     image: "minio/minio:${MINIO_VERSION}"
@@ -67,6 +71,8 @@ services:
       default:
         aliases:
           - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
+    ports:
+      - "127.0.0.1:${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
 
   create-bucket:
     image: minio/mc:latest
