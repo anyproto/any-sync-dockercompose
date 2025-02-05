@@ -12,13 +12,11 @@ endif
 # targets
 generate_env:
 ifeq ($(QUIET_MODE),true)
-	docker buildx build --quiet --load --tag generateconfig-env --file Dockerfile-generateconfig-env . >/dev/null
+	docker buildx build --quiet --load --tag generate-env --file Dockerfile-generate-env . >/dev/null
 else
-	docker buildx build --load --tag generateconfig-env --file Dockerfile-generateconfig-env .
+	docker buildx build --load --tag generate-env --file Dockerfile-generate-env .
 endif
-	docker run --rm \
-		--volume ${CURDIR}/:/code/:Z \
-		generateconfig-env
+	docker run --detach --rm --volume ${CURDIR}/:/code/ generate-env
 
 start: generate_env
 	$(DOCKER_COMPOSE) up --detach --remove-orphans --quiet-pull

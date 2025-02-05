@@ -1,6 +1,0 @@
-# syntax=docker/dockerfile:1
-FROM golang:1.23-alpine
-RUN apk add --no-cache bash yq
-RUN go install github.com/anyproto/any-sync-tools/anyconf@latest
-WORKDIR /code
-ENTRYPOINT ["bash", "/code/docker-generateconfig/anyconf.sh"]

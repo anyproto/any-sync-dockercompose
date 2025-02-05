@@ -1,0 +1,19 @@
+FROM ghcr.io/anyproto/any-sync-tools:latest
+
+WORKDIR /code
+
+RUN apt update && \
+    apt install -y python3 python3-pip && \
+    pip3 install --no-cache-dir pyyaml && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["sh", "-c", \
+    "if grep -q 'networkId' /code/etc/client.yml && [ ! -f /code/etc/ids.yml ]; then \
+        python3 /code/docker-generateconfig/persistentAccount.py && \
+        any-sync-network create --auto --c /code/etc/defaultTemplate.yml && \
+        python3 /code/docker-generateconfig/persistentAccount.py; \
+    else \
+        any-sync-network create --auto --c /code/etc/defaultTemplate.yml && \
+        python3 /code/docker-generateconfig/persistentAccount.py; \
+    fi"]

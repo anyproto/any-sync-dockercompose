@@ -104,12 +104,6 @@ runTest(){
     for TEST in $TESTS_DIR/run.d/*.sh; do
         echo -e "${YELLOW}Executing test: $TEST ${NC}"
         local TEST_FILE_NAME=$(basename $TEST)
-        if [[ $TEST_FILE_NAME == 'setAnySyncPort.sh' ]]; then
-            if ! $CLEAN_DATA; then
-                echo "skipping for exist storage"
-                continue
-            fi
-        fi
 
         # record the start time in seconds since the epoch
         local START_TIME=$(date +%s)
