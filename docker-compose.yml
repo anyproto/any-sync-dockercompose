@@ -1,28 +1,15 @@
 services:
-  # generate configs using the anyconf utility
-  generateconfig-anyconf:
+  # generate configs using the any-sync-network tool
+  generateconfig:
     build:
       context: .
-      dockerfile: Dockerfile-generateconfig-anyconf
+      dockerfile: Dockerfile-generateconfig
     volumes:
       - ./:/code:Z
-      - "${STORAGE_DIR}:/code/storage:Z"
-
-  # processing any-sync-* configs
-  generateconfig-processing:
-    depends_on:
-      generateconfig-anyconf:
-        condition: service_completed_successfully
-    build:
-      context: .
-      dockerfile: Dockerfile-generateconfig-processing
-    volumes:
-      - ./:/code:Z
-      - "${STORAGE_DIR}:/code/storage:Z"
 
   mongo-1:
     depends_on:
-      generateconfig-processing:
+      generateconfig:
         condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
     restart: unless-stopped
@@ -38,7 +25,7 @@ services:
 
   redis:
     depends_on:
-      generateconfig-processing:
+      generateconfig:
         condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: unless-stopped
@@ -88,7 +75,7 @@ services:
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
+      generateconfig:
         condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
@@ -100,7 +87,7 @@ services:
   any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
+      generateconfig:
         condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
@@ -134,7 +121,7 @@ services:
       - "${ANY_SYNC_FILENODE_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-filenode:/etc/any-sync-filenode:Z
-      - ./etc/.aws:/root/.aws:ro
+      - ./etc/awsCredentials:/root/.aws/credentials:ro
       - "${STORAGE_DIR}/networkStore/any-sync-filenode:/networkStore:Z"
     deploy:
       resources:
@@ -202,6 +189,7 @@ services:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
     restart: unless-stopped
 
+
   any-sync-consensusnode:
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
     depends_on:
@@ -233,11 +221,11 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - "${STORAGE_DIR}:/code/storage:Z"
+      - ./etc/nodes.yml:/nodes.yml:Z
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
     healthcheck:
-      test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -E 'netcheck\s+success'
+      test: any-sync-netcheck -c /nodes.yml 2>&1| grep -E 'netcheck\s+success'
       interval: 10s
       start_period: 5s
