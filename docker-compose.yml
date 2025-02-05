@@ -221,11 +221,11 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - ./etc/client.yml:/client.yml:Z
+      - ./etc/nodes.yml:/nodes.yml:Z
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
     healthcheck:
-      test: any-sync-netcheck -c /client.yml 2>&1| grep -E 'netcheck\s+success'
+      test: any-sync-netcheck -c /nodes.yml 2>&1| grep -E 'netcheck\s+success'
       interval: 10s
       start_period: 5s

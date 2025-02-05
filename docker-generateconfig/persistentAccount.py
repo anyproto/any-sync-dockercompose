@@ -104,6 +104,18 @@ def write_config():
             if file in ('config.yml', 'network.yml', 'client.yml'):
                 update_config_file(os.path.join(root, file), ids_data, network_info)
 
+# retrieve node internal addresses from client.yml to send to netcheck tool
+def prepare_netcheck_config(input_path: str, output_path: str):
+    with open(input_path, "r") as file:
+        data = yaml.safe_load(file)
+
+    for node in data.get("nodes", []):
+        if "addresses" in node:
+            node["addresses"] = node["addresses"][:2]
+
+    with open(output_path, "w") as file:
+        yaml.dump(data, file, default_flow_style=False)
+
 if __name__ == "__main__":
     # Check if ids.yml exists and decide whether to read or write configurations
     if os.path.exists(IDS_FILE):
@@ -112,3 +124,6 @@ if __name__ == "__main__":
     else:
         logging.info(f'{IDS_FILE} not found! Reading current accounts and network identifiers...')
         read_config()
+
+    logging.info(f'Generate nodes.yml config for netcheck tool...')
+    prepare_netcheck_config("etc/client.yml", "etc/nodes.yml")
