@@ -241,3 +241,8 @@ services:
       test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -E 'netcheck\s+success'
       interval: 10s
       start_period: 5s
+
+# any-sync-network default name
+networks:
+  default:
+    name: anysync.network
