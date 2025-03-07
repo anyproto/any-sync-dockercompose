@@ -155,6 +155,7 @@ services:
     volumes:
       - ./etc/any-sync-node-1:/etc/any-sync-node:Z
       - "${STORAGE_DIR}/any-sync-node-1:/storage:Z"
+      - "${STORAGE_DIR}/anyStorage/any-sync-node-1:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-1:/networkStore:Z"
     deploy:
       resources:
@@ -175,6 +176,7 @@ services:
     volumes:
       - ./etc/any-sync-node-2:/etc/any-sync-node:Z
       - "${STORAGE_DIR}/any-sync-node-2:/storage:Z"
+      - "${STORAGE_DIR}/anyStorage/any-sync-node-2:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-2:/networkStore:Z"
     deploy:
       resources:
@@ -195,6 +197,7 @@ services:
     volumes:
       - ./etc/any-sync-node-3:/etc/any-sync-node:Z
       - "${STORAGE_DIR}/any-sync-node-3:/storage:Z"
+      - "${STORAGE_DIR}/anyStorage/any-sync-node-3:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-3:/networkStore:Z"
     deploy:
       resources:
