@@ -23,6 +23,7 @@ space:
 
 storage:
     path: /storage
+    anyStorePath: /anyStorage
 
 nodeSync:
     periodicSyncHours: 2
