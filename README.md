@@ -2,8 +2,8 @@
 Self-host for any-sync, designed for personal usage or for review and testing purposes.
 
 > [!IMPORTANT]
-> This image is suitable for running your personal self-hosted any-sync network for home usage.
-> If you plan to self-host a heavily used any-sync network, please consider other options.
+> This image is suitable for running your personal self-hosted any-sync network for home use.
+> If you plan to self-host a heavily used any-sync network, please consider using other options, such as a [Puppet](https://github.com/anyproto/puppet-anysync) or [Ansible](https://github.com/anyproto/puppet-anysync) module.
 
 > [!WARNING]
 > Before upgrading please read [Upgrade-Guide](../../wiki/Upgrade-Guide)
