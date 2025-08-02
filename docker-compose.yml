@@ -1,6 +1,7 @@
 services:
   # generate configs using the anyconf utility
   generateconfig-anyconf:
+    restart: no
     build:
       context: .
       dockerfile: Dockerfile-generateconfig-anyconf
@@ -10,6 +11,7 @@ services:
 
   # processing any-sync-* configs
   generateconfig-processing:
+    restart: no
     depends_on:
       generateconfig-anyconf:
         condition: service_completed_successfully
@@ -75,6 +77,7 @@ services:
       - "127.0.0.1:${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
 
   create-bucket:
+    restart: no
     image: minio/mc:latest
     depends_on:
       - minio
