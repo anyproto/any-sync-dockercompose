@@ -239,11 +239,11 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - "${STORAGE_DIR}:/code/storage:Z"
+      - "${STORAGE_DIR}/docker-generateconfig/nodes.yml:/app/nodes.yml:Z"
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
     healthcheck:
-      test: any-sync-netcheck -c /code/storage/docker-generateconfig/nodes.yml 2>&1| grep -E 'netcheck\s+success'
+      test: any-sync-netcheck -c nodes.yml 2>&1| grep -E 'netcheck\s+success'
       interval: 10s
       start_period: 5s
