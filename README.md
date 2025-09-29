@@ -29,7 +29,7 @@ To get started, follow these steps:
     For configuration, use the `.env.override` file.  
     For example, setting an external IP for listening:
     ```bash
-    echo 'EXTERNAL_LISTEN_HOSTS=<yourExternalIp1> <yourExternalIp2' >> .env.override
+    echo 'EXTERNAL_LISTEN_HOSTS="<yourExternalIp1> <yourExternalIp2>"' >> .env.override
     ```
     More information can be found [here](../../wiki/Configuration).
 5. **Run the project:**
