@@ -28,3 +28,16 @@ storage:
 nodeSync:
     periodicSyncHours: 2
     syncOnStart: true
+
+s3Store:
+    enabled: true
+    region: us-east-1
+    endpoint: http://minio:%MINIO_PORT%
+    bucket: %MINIO_BUCKET%
+    keyPrefix: "node_storage/node-1"
+    forcePathStyle: true # 'true' for self-hosted S3 Object Storage
+
+archive:
+    enabled: true
+    archiveAfterDays: 1
+    checkPeriodMinutes: 2

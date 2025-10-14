@@ -157,6 +157,7 @@ services:
       - "${ANY_SYNC_NODE_1_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-1:/etc/any-sync-node:Z
+      - ./etc/.aws:/root/.aws:ro
       - "${STORAGE_DIR}/any-sync-node-1:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-1:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-1:/networkStore:Z"
@@ -178,6 +179,7 @@ services:
       - "${ANY_SYNC_NODE_2_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-2:/etc/any-sync-node:Z
+      - ./etc/.aws:/root/.aws:ro
       - "${STORAGE_DIR}/any-sync-node-2:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-2:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-2:/networkStore:Z"
@@ -199,6 +201,7 @@ services:
       - "${ANY_SYNC_NODE_3_METRIC_ADDR}:8000"
     volumes:
       - ./etc/any-sync-node-3:/etc/any-sync-node:Z
+      - ./etc/.aws:/root/.aws:ro
       - "${STORAGE_DIR}/any-sync-node-3:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-3:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-3:/networkStore:Z"
