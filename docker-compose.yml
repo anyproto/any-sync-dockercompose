@@ -242,7 +242,7 @@ services:
       - any-sync-node-2
       - any-sync-node-3
     volumes:
-      - "${STORAGE_DIR}/docker-generateconfig/nodes.yml:/app/nodes.yml:Z"
+      - "${STORAGE_DIR}/docker-generateconfig:/app:Z"
     command: ["tail", "-f", "/dev/null"]
     stop_signal: SIGKILL
     tty: true
