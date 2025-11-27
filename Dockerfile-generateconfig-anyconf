@@ -1,5 +1,17 @@
 # syntax=docker/dockerfile:1
 FROM ghcr.io/anyproto/any-sync-tools
-RUN apk add --no-cache bash yq
+
+ARG TARGETARCH
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        bash \
+        curl \
+        ca-certificates; \
+    curl -L "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${TARGETARCH}" \
+        -o /usr/local/bin/yq; \
+    chmod +x /usr/local/bin/yq; \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /code
 ENTRYPOINT ["bash", "/code/docker-generateconfig/anyconf.sh"]
