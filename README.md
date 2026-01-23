@@ -16,7 +16,7 @@ Please visit the Wiki for comprehensive guides, installation instructions and mo
 To get started, follow these steps:
 
 1. **Install the necessary dependencies:**  
-    You need to install Docker and Docker Compose https://docs.docker.com/compose/install/
+    You need to install Docker, Docker buildx, and Docker Compose https://docs.docker.com/compose/install/
 2. **Clone the repository:**
     ```bash
     git clone https://github.com/anyproto/any-sync-dockercompose.git
