@@ -243,10 +243,71 @@ services:
       - any-sync-node-3
     volumes:
       - "${STORAGE_DIR}/docker-generateconfig:/conf:Z"
-    command: ["tail", "-f", "/dev/null"]
-    stop_signal: SIGKILL
-    tty: true
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          echo "$(date): Running netcheck..."
+          any-sync-netcheck -c /conf/nodes.yml 2>&1 | tee /tmp/netcheck-last.log
+          echo "$(date): Netcheck completed, waiting 5 seconds..."
+          sleep 5
+        done
+    stop_signal: SIGTERM
     healthcheck:
-      test: any-sync-netcheck -c /conf/nodes.yml 2>&1| grep -E 'netcheck\s+success'
-      interval: 10s
+      test: grep -qE 'netcheck\s+success' /tmp/netcheck-last.log
+      interval: 5s
       start_period: 5s
+
+  # optional services - uncomment if necessary
+  # usage: https://github.com/anyproto/any-sync-dockercompose/wiki/Anytype-cli
+
+  # anytype-cli bootstrap - create bot account on first run
+  # anytype-cli_bootstrap:
+  #   image: "ghcr.io/anyproto/anytype-cli:${ANYTYPE_CLI_VERSION}"
+  #   restart: "no"
+  #   depends_on:
+  #     netcheck:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./etc/client.yml:/etc/anytype/network.yml:ro
+  #     - "${STORAGE_DIR}/anytype-cli:/root/.anytype:Z"
+  #   environment:
+  #     - ANYTYPE_CLI_ACCOUNT_NAME=${ANYTYPE_CLI_ACCOUNT_NAME:-anytype-bot}
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     if [ ! -f /root/.anytype/config.json ]; then
+  #       echo 'Creating bot account...';
+  #       /app/anytype serve &
+  #       SERVER_PID=$$!;
+  #       sleep 2;
+  #       /app/anytype auth create $${ANYTYPE_CLI_ACCOUNT_NAME} --network-config /etc/anytype/network.yml || true;
+  #       echo 'Waiting for account initialization...';
+  #       sleep 2;
+  #       kill $$SERVER_PID 2>/dev/null || true;
+  #       wait $$SERVER_PID 2>/dev/null || true;
+  #     else
+  #       echo 'Bot account already exists, skipping bootstrap';
+  #     fi;
+  #     exit 0;
+  #     "
+
+  # anytype-cli server
+  # anytype-cli:
+  #   image: "ghcr.io/anyproto/anytype-cli:${ANYTYPE_CLI_VERSION}"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     anytype-cli_bootstrap:
+  #       condition: service_completed_successfully
+  #   ports:
+  #     - "127.0.0.1:${ANYTYPE_CLI_GRPC_PORT}:31010"
+  #     - "127.0.0.1:${ANYTYPE_CLI_GRPC_WEB_PORT}:31011"
+  #     - "127.0.0.1:${ANYTYPE_CLI_API_PORT}:31012"
+  #   volumes:
+  #     - ./etc/client.yml:/etc/anytype/network.yml:ro
+  #     - "${STORAGE_DIR}/anytype-cli:/root/.anytype:Z"
+  #   healthcheck:
+  #     test: nc -z 127.0.0.1 31010 || exit 1
+  #     interval: 30s
+  #     timeout: 5s
+  #     start_period: 15s
+  #     retries: 3
