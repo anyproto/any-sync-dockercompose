@@ -49,5 +49,8 @@ restart: down start
 update: pull down start
 upgrade: down clean start
 
+STORAGE_DIR := $(shell grep -m1 '^STORAGE_DIR=' .env 2>/dev/null | cut -d= -f2- | tr -d '"')
+STORAGE_DIR := $(if $(STORAGE_DIR),$(STORAGE_DIR),./storage)
+
 cleanEtcStorage:
-	rm -rf etc/ storage/
+	rm -rf etc/ $(STORAGE_DIR)
