@@ -1,6 +1,7 @@
 services:
   # generate configs using the anyconf utility
   generateconfig-anyconf:
+    userns_mode: "host"
     restart: "no"
     build:
       context: .
@@ -12,6 +13,7 @@ services:
 
   # processing any-sync-* configs
   generateconfig-processing:
+    userns_mode: "host"
     restart: "no"
     depends_on:
       generateconfig-anyconf:
@@ -30,6 +32,7 @@ services:
       generateconfig-processing:
         condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
+    userns_mode: "host"
     restart: unless-stopped
     command: ["--replSet", "${MONGO_REPLICA_SET}", "--port", "${MONGO_1_PORT}"]
     volumes:
@@ -46,6 +49,7 @@ services:
       generateconfig-processing:
         condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
+    userns_mode: "host"
     restart: unless-stopped
     command: ["redis-server", "--port", "${REDIS_PORT}", "--dir", "/data/", "--appendonly", "yes", "--maxmemory", "${REDIS_MAXMEMORY}", "--maxmemory-policy", "noeviction", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/redisbloom.so"]
     volumes:
@@ -60,6 +64,7 @@ services:
 
   minio:
     image: "minio/minio:${MINIO_VERSION}"
+    userns_mode: "host"
     restart: unless-stopped
     command: ["server", "/data", "--console-address", ":${MINIO_WEB_PORT}", "--address", ":${MINIO_PORT}"]
     environment:
@@ -80,6 +85,7 @@ services:
       - "127.0.0.1:${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
 
   create-bucket:
+    userns_mode: "host"
     restart: "no"
     image: minio/mc:latest
     depends_on:
@@ -100,6 +106,7 @@ services:
         condition: service_healthy
     volumes:
       - ./etc/any-sync-coordinator:/etc/any-sync-coordinator:Z
+    userns_mode: "host"
     restart: "no"
     command: ["/bin/any-sync-confapply", "-c", "/etc/any-sync-coordinator/config.yml", "-n", "/etc/any-sync-coordinator/network.yml", "-e"]
 
@@ -123,6 +130,7 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   any-sync-filenode:
@@ -146,6 +154,7 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   any-sync-node-1:
@@ -168,6 +177,7 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   any-sync-node-2:
@@ -190,6 +200,7 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   any-sync-node-3:
@@ -212,6 +223,7 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   any-sync-consensusnode:
@@ -230,12 +242,14 @@ services:
       resources:
         limits:
           memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+    userns_mode: "host"
     restart: unless-stopped
 
   # any-sync-netcheck
   netcheck:
     image: "ghcr.io/anyproto/any-sync-tools:${ANY_SYNC_TOOLS_VERSION}"
     pull_policy: always
+    userns_mode: "host"
     restart: unless-stopped
     depends_on:
       - any-sync-consensusnode
@@ -267,6 +281,7 @@ services:
   # anytype-cli bootstrap - create bot account on first run
   # anytype-cli_bootstrap:
   #   image: "ghcr.io/anyproto/anytype-cli:${ANYTYPE_CLI_VERSION}"
+  #   userns_mode: "host"
   #   restart: "no"
   #   depends_on:
   #     netcheck:
@@ -297,6 +312,7 @@ services:
   # anytype-cli server
   # anytype-cli:
   #   image: "ghcr.io/anyproto/anytype-cli:${ANYTYPE_CLI_VERSION}"
+  #   userns_mode: "host"
   #   restart: unless-stopped
   #   depends_on:
   #     anytype-cli_bootstrap:
