@@ -17,6 +17,7 @@ else
 	docker buildx build --load --tag generateconfig-env --file Dockerfile-generateconfig-env .
 endif
 	docker run --rm \
+		--userns "host" \
 		--volume ${CURDIR}/:/code/:Z \
 		generateconfig-env
 
