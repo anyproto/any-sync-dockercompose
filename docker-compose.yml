@@ -1,24 +1,10 @@
 services:
-  # generate configs using the anyconf utility
-  generateconfig-anyconf:
+  # generate and process any-sync configs
+  any-sync-init:
     restart: "no"
     build:
       context: .
-      dockerfile: Dockerfile-generateconfig-anyconf
-    volumes:
-      - ./.env:/code/.env:ro,Z
-      - ./docker-generateconfig:/code/docker-generateconfig:ro,Z
-      - "${STORAGE_DIR}:/code/storage:Z"
-
-  # processing any-sync-* configs
-  generateconfig-processing:
-    restart: "no"
-    depends_on:
-      generateconfig-anyconf:
-        condition: service_completed_successfully
-    build:
-      context: .
-      dockerfile: Dockerfile-generateconfig-processing
+      dockerfile: Dockerfile-any-sync-init
     volumes:
       - ./.env:/code/.env:ro,Z
       - ./docker-generateconfig:/code/docker-generateconfig:ro,Z
@@ -27,7 +13,7 @@ services:
 
   mongo-1:
     depends_on:
-      generateconfig-processing:
+      any-sync-init:
         condition: service_completed_successfully
     image: "mongo:${MONGO_VERSION}"
     restart: unless-stopped
@@ -43,7 +29,7 @@ services:
 
   redis:
     depends_on:
-      generateconfig-processing:
+      any-sync-init:
         condition: service_completed_successfully
     image: "redis/redis-stack-server:${REDIS_VERSION}"
     restart: unless-stopped
@@ -94,7 +80,7 @@ services:
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
+      any-sync-init:
         condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
@@ -106,7 +92,7 @@ services:
   any-sync-coordinator:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
-      generateconfig-processing:
+      any-sync-init:
         condition: service_completed_successfully
       mongo-1:
         condition: service_healthy
