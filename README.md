@@ -1,10 +1,10 @@
 # Docker Compose for any-sync
 
-Self-hosted any-sync network, designed for personal use or review and testing purposes.
+A self-hosted any-sync network, designed for personal use, review, or testing purposes.
 
 > [!IMPORTANT]
 > This setup is suitable for personal self-hosted any-sync networks.
-> For heavily used production deployments, consider [Puppet](https://github.com/anyproto/puppet-anysync) or [Ansible](https://github.com/anyproto/ansible-anysync) modules.
+> For high-load production deployments, consider using the [Puppet](https://github.com/anyproto/puppet-anysync) or [Ansible](https://github.com/anyproto/ansible-anysync) modules.
 
 > [!WARNING]
 > Before upgrading, read the [Upgrade Guide](../../wiki/Upgrade-Guide).
