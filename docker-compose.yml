@@ -288,9 +288,9 @@ services:
   #     anytype-cli_bootstrap:
   #       condition: service_completed_successfully
   #   ports:
-  #     - "127.0.0.1:${ANYTYPE_CLI_GRPC_PORT}:31010"
-  #     - "127.0.0.1:${ANYTYPE_CLI_GRPC_WEB_PORT}:31011"
-  #     - "127.0.0.1:${ANYTYPE_CLI_API_PORT}:31012"
+  #     - "${ANYTYPE_CLI_GRPC_PORT}:31010"
+  #     - "${ANYTYPE_CLI_GRPC_WEB_PORT}:31011"
+  #     - "${ANYTYPE_CLI_API_PORT}:31012"
   #   volumes:
   #     - ./etc/client.yml:/etc/anytype/network.yml:ro
   #     - "${STORAGE_DIR}/anytype-cli:/root/.anytype:Z"
