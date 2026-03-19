@@ -39,32 +39,33 @@ Optional service: `anytype-cli` (commented out in `docker-compose.yml`) — HTTP
    cd any-sync-dockercompose
    ```
 
-2. **Configure** (optional — skip for local-only use):
+2. **Create your env file:**
    ```bash
-   # Expose to an external IP:
-   echo 'EXTERNAL_LISTEN_HOSTS="<yourExternalIp>"' >> .env.override
+   cp .env.example .env
    ```
-   See [Configuration](../../wiki/Configuration) for all options.
+   Edit `.env` directly for any customizations (e.g. `EXTERNAL_LISTEN_HOSTS`).
 
-3. **Start:**
+3. **Optionally fetch the latest compatible service versions:**
    ```bash
-   make start
+   ./update-versions.sh
+   ```
+   This updates the `ANY_SYNC_*_VERSION` variables in `.env` from the Anytype API.
+   Skip this step to use the pinned versions already in `.env.example`.
+
+4. **Start:**
+   ```bash
+   docker compose up -d
+   # or: make start
    ```
    On first run this generates configs in `./etc/` and starts all services.
 
-4. **Connect Anytype client:**
+5. **Connect Anytype client:**
    Upload `./etc/client.yml` to the Anytype app as your self-hosted network config.
    See [Anytype docs](https://doc.anytype.io/anytype-docs/data-and-security/self-hosting#switching-between-networks).
 
 ## Configuration
 
-| File | Purpose |
-|---|---|
-| `.env.default` | Default values — **do not edit** |
-| `.env` | Generated file — **do not edit** |
-| `.env.override` | Your customizations — edit this |
-
-Common overrides:
+Copy `.env.example` to `.env` and edit it directly. Common customizations:
 
 ```bash
 # External IP(s) for clients outside localhost
@@ -76,6 +77,8 @@ STORAGE_DIR="/mnt/data/any-sync"
 # Per-daemon memory limit (default: 500M)
 ANY_SYNC_DAEMONS_MEMORY_LIMIT=1G
 ```
+
+To update service versions to the latest compatible set, run `./update-versions.sh`.
 
 Full reference: [Configuration Wiki](../../wiki/Configuration).
 
