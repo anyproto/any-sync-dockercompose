@@ -3,13 +3,24 @@
 # and updates the version variables in .env in-place.
 #
 # Usage:
-#   ./update-versions.sh          # updates .env
-#   ./update-versions.sh my.env   # updates a custom env file
+#   ./update-versions.sh                    # updates .env with prod versions
+#   ./update-versions.sh --stage1           # updates .env with stage1 versions
+#   ./update-versions.sh my.env             # updates a custom env file
+#   ./update-versions.sh my.env --stage1    # updates a custom env file with stage1 versions
 
 set -euo pipefail
 
-ENV_FILE="${1:-.env}"
-API_URL="https://puppetdoc.anytype.io/api/v1/prod-any-sync-compatible-versions/"
+ENV_FILE=".env"
+CHANNEL="prod"
+
+for arg in "$@"; do
+    case "$arg" in
+        --stage1) CHANNEL="stage1" ;;
+        *)        ENV_FILE="$arg" ;;
+    esac
+done
+
+API_URL="https://puppetdoc.anytype.io/api/v1/${CHANNEL}-any-sync-compatible-versions/"
 
 for cmd in curl jq; do
     command -v "$cmd" >/dev/null 2>&1 || { echo "Error: '$cmd' is required but not installed."; exit 1; }
@@ -20,7 +31,7 @@ if [[ ! -f "$ENV_FILE" ]]; then
     exit 1
 fi
 
-echo "Fetching latest compatible versions..."
+echo "Fetching latest compatible versions (channel: ${CHANNEL})..."
 response=$(curl -fsSL --max-time 10 "$API_URL") || {
     echo "Error: failed to fetch versions from $API_URL"
     exit 1

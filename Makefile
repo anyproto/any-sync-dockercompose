@@ -12,6 +12,7 @@ endif
 # targets
 start:
 	@[ -f .env ] || { echo "Error: .env not found — run: cp .env.example .env"; exit 1; }
+	@./update-versions.sh > /dev/null 2>&1
 	$(DOCKER_COMPOSE) up --detach --remove-orphans --quiet-pull
 ifeq ($(QUIET_MODE),false)
 	@echo "Done! Upload your self-hosted network configuration file ${CURDIR}/etc/client.yml into the client app"
