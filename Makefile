@@ -10,17 +10,9 @@ else
 endif
 
 # targets
-generate_env:
-ifeq ($(QUIET_MODE),true)
-	docker buildx build --quiet --load --tag generateconfig-env --file Dockerfile-generateconfig-env . >/dev/null
-else
-	docker buildx build --load --tag generateconfig-env --file Dockerfile-generateconfig-env .
-endif
-	docker run --rm \
-		--volume ${CURDIR}/:/code/:Z \
-		generateconfig-env
-
-start: generate_env
+start:
+	@[ -f .env ] || { echo "Error: .env not found — run: cp .env.example .env"; exit 1; }
+	@./update-versions.sh > /dev/null 2>&1
 	$(DOCKER_COMPOSE) up --detach --remove-orphans --quiet-pull
 ifeq ($(QUIET_MODE),false)
 	@echo "Done! Upload your self-hosted network configuration file ${CURDIR}/etc/client.yml into the client app"
