@@ -21,11 +21,23 @@ services:
     volumes:
       - "${STORAGE_DIR}/mongo-1:/data/db:Z"
     healthcheck:
-      test: test $$(mongosh --port ${MONGO_1_PORT} --quiet --eval "try {rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:\"mongo-1:${MONGO_1_PORT}\"}]})} catch(e) {rs.status().ok}") -eq 1
-      interval: 10s
-      start_period: 30s
+      test: mongosh --port ${MONGO_1_PORT} --quiet --eval "db.adminCommand('ping').ok" | grep -q 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     ports:
       - "127.0.0.1:${MONGO_1_PORT}:${MONGO_1_PORT}"
+
+  mongo-1-bootstrap:
+    image: "mongo:${MONGO_VERSION}"
+    restart: "no"
+    depends_on:
+      mongo-1:
+        condition: service_healthy
+    command: >
+      mongosh --host mongo-1:${MONGO_1_PORT} --quiet --eval
+      "try { rs.initiate({_id:'${MONGO_REPLICA_SET}',members:[{_id:0,host:'mongo-1:${MONGO_1_PORT}'}]}) } catch(e) { if (e.codeName !== 'AlreadyInitialized') throw e }"
 
   redis:
     depends_on:
@@ -82,8 +94,8 @@ services:
     depends_on:
       any-sync-init:
         condition: service_completed_successfully
-      mongo-1:
-        condition: service_healthy
+      mongo-1-bootstrap:
+        condition: service_completed_successfully
     volumes:
       - ./etc/any-sync-coordinator:/etc/any-sync-coordinator:Z
     restart: "no"
@@ -94,8 +106,8 @@ services:
     depends_on:
       any-sync-init:
         condition: service_completed_successfully
-      mongo-1:
-        condition: service_healthy
+      mongo-1-bootstrap:
+        condition: service_completed_successfully
       any-sync-coordinator_bootstrap:
         condition: service_completed_successfully
     ports:
