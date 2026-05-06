@@ -1,0 +1,51 @@
+name: Telegram Notifications
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on new Issue
+        if: github.event_name == 'issues'
+        uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🐛 *New Issue* in [${{ github.repository }}](https://github.com/${{ github.repository }})
+
+            *#${{ github.event.issue.number }}* [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})
+            Opened by: ${{ github.event.issue.user.login }}
+
+      - name: Notify on new Pull Request
+        if: github.event_name == 'pull_request'
+        uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🔀 *New Pull Request* in [${{ github.repository }}](https://github.com/${{ github.repository }})
+
+            *#${{ github.event.pull_request.number }}* [${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
+            By: ${{ github.event.pull_request.user.login }} → `${{ github.event.pull_request.base.ref }}`
+
+      - name: Notify on new Release
+        if: github.event_name == 'release'
+        uses: appleboy/telegram-action@v1.0.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🚀 *New Release* in [${{ github.repository }}](https://github.com/${{ github.repository }})
+
+            [${{ github.event.release.tag_name }}](${{ github.event.release.html_url }}) — ${{ github.event.release.name }}
