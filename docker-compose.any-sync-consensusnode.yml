@@ -1,9 +1,0 @@
-services:
-  any-sync-consensusnode:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      ssh:
-        - default
-      args:
-        REPO_DIR: repos/any-sync-consensusnode/

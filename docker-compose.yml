@@ -1,3 +1,16 @@
+x-anysync-daemon: &anysync-daemon
+  restart: unless-stopped
+  deploy:
+    resources:
+      limits:
+        memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
+
+x-anysync-node: &anysync-node
+  image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
+  depends_on:
+    any-sync-coordinator:
+      condition: service_started
+
 services:
   # generate and process any-sync configs
   any-sync-init:
@@ -90,6 +103,7 @@ services:
     command: ["/bin/any-sync-confapply", "-c", "/etc/any-sync-coordinator/config.yml", "-n", "/etc/any-sync-coordinator/network.yml", "-e"]
 
   any-sync-coordinator:
+    <<: *anysync-daemon
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
     depends_on:
       any-sync-init:
@@ -105,13 +119,9 @@ services:
     volumes:
       - ./etc/any-sync-coordinator:/etc/any-sync-coordinator:Z
       - "${STORAGE_DIR}/networkStore/any-sync-coordinator:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   any-sync-filenode:
+    <<: *anysync-daemon
     image: "ghcr.io/anyproto/any-sync-filenode:${ANY_SYNC_FILENODE_VERSION}"
     depends_on:
       redis:
@@ -128,17 +138,9 @@ services:
       - ./etc/any-sync-filenode:/etc/any-sync-filenode:Z
       - ./etc/.aws:/root/.aws:ro
       - "${STORAGE_DIR}/networkStore/any-sync-filenode:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   any-sync-node-1:
-    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on:
-      any-sync-coordinator:
-        condition: service_started
+    <<: [*anysync-daemon, *anysync-node]
     ports:
       - "${ANY_SYNC_NODE_1_PORT}:${ANY_SYNC_NODE_1_PORT}"
       - "${ANY_SYNC_NODE_1_QUIC_PORT}:${ANY_SYNC_NODE_1_QUIC_PORT}/udp"
@@ -150,17 +152,9 @@ services:
       - "${STORAGE_DIR}/any-sync-node-1:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-1:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-1:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   any-sync-node-2:
-    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on:
-      any-sync-coordinator:
-        condition: service_started
+    <<: [*anysync-daemon, *anysync-node]
     ports:
       - "${ANY_SYNC_NODE_2_PORT}:${ANY_SYNC_NODE_2_PORT}"
       - "${ANY_SYNC_NODE_2_QUIC_PORT}:${ANY_SYNC_NODE_2_QUIC_PORT}/udp"
@@ -172,17 +166,9 @@ services:
       - "${STORAGE_DIR}/any-sync-node-2:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-2:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-2:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   any-sync-node-3:
-    image: "ghcr.io/anyproto/any-sync-node:${ANY_SYNC_NODE_VERSION}"
-    depends_on:
-      any-sync-coordinator:
-        condition: service_started
+    <<: [*anysync-daemon, *anysync-node]
     ports:
       - "${ANY_SYNC_NODE_3_PORT}:${ANY_SYNC_NODE_3_PORT}"
       - "${ANY_SYNC_NODE_3_QUIC_PORT}:${ANY_SYNC_NODE_3_QUIC_PORT}/udp"
@@ -194,13 +180,9 @@ services:
       - "${STORAGE_DIR}/any-sync-node-3:/storage:Z"
       - "${STORAGE_DIR}/anyStorage/any-sync-node-3:/anyStorage:Z"
       - "${STORAGE_DIR}/networkStore/any-sync-node-3:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   any-sync-consensusnode:
+    <<: *anysync-daemon
     image: "ghcr.io/anyproto/any-sync-consensusnode:${ANY_SYNC_CONSENSUSNODE_VERSION}"
     depends_on:
       any-sync-coordinator:
@@ -212,11 +194,6 @@ services:
     volumes:
       - ./etc/any-sync-consensusnode:/etc/any-sync-consensusnode:Z
       - "${STORAGE_DIR}/networkStore/any-sync-consensusnode:/networkStore:Z"
-    deploy:
-      resources:
-        limits:
-          memory: ${ANY_SYNC_DAEMONS_MEMORY_LIMIT:-}
-    restart: unless-stopped
 
   # any-sync-netcheck
   netcheck:

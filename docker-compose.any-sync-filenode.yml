@@ -1,9 +1,0 @@
-services:
-  any-sync-filenode:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      ssh:
-        - default
-      args:
-        REPO_DIR: repos/any-sync-filenode/
