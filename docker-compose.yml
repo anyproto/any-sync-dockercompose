@@ -58,7 +58,7 @@ services:
       - "127.0.0.1:${REDIS_PORT}:${REDIS_PORT}"
 
   minio:
-    image: "minio/minio:${MINIO_VERSION}"
+    image: "quay.io/minio/minio:${MINIO_VERSION}"
     restart: unless-stopped
     command: ["server", "/data", "--console-address", ":${MINIO_WEB_PORT}", "--address", ":${MINIO_PORT}"]
     environment:
@@ -75,12 +75,10 @@ services:
       default:
         aliases:
           - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
-    ports:
-      - "127.0.0.1:${EXTERNAL_MINIO_WEB_PORT}:${MINIO_WEB_PORT}"
 
   create-bucket:
     restart: "no"
-    image: minio/mc:latest
+    image: quay.io/minio/mc:latest
     depends_on:
       - minio
     entrypoint: >
