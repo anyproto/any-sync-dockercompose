@@ -241,10 +241,10 @@ services:
   #     /bin/sh -c "
   #     if [ ! -f /root/.anytype/config.json ]; then
   #       echo 'Creating bot account...';
-  #       /app/anytype serve &
+  #       anytype serve &
   #       SERVER_PID=$$!;
   #       sleep 2;
-  #       /app/anytype auth create $${ANYTYPE_CLI_ACCOUNT_NAME} --network-config /etc/anytype/network.yml || true;
+  #       anytype auth create $${ANYTYPE_CLI_ACCOUNT_NAME} --network-config /etc/anytype/network.yml || true;
   #       echo 'Waiting for account initialization...';
   #       sleep 2;
   #       kill $$SERVER_PID 2>/dev/null || true;

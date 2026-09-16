@@ -13,11 +13,11 @@ docker compose ps anytype-cli
 echo
 
 echo "2. Checking authentication status..."
-docker compose exec anytype-cli /app/anytype auth status
+docker compose exec anytype-cli anytype auth status
 echo
 
 echo "3. Listing spaces..."
-docker compose exec anytype-cli /app/anytype space list
+docker compose exec anytype-cli anytype space list
 echo
 
 echo "4. Checking health..."
