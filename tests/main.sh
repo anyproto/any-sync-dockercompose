@@ -67,12 +67,12 @@ EOF
     fi
 }
 
-# Verifies if Minio bucket was created successfully
+# Verifies if the Garage bucket was created successfully
 checkBucketCreation() {
-    if docker compose logs create-bucket | grep -q "Bucket created successfully"; then
-        echo -e "${GREEN} Minio bucket creation - OK [✔] ${NC}"
+    if docker compose exec -T garage /garage bucket list 2>/dev/null | grep -q "${S3_BUCKET}"; then
+        echo -e "${GREEN} Garage bucket creation - OK [✔] ${NC}"
     else
-        echo -e "${RED} Minio bucket creation - FAILED [✖] ${NC}"
+        echo -e "${RED} Garage bucket creation - FAILED [✖] ${NC}"
         restoreBackup
         exit 1
     fi

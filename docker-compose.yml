@@ -12,9 +12,25 @@ x-anysync-node: &anysync-node
       condition: service_started
 
 services:
+  # refuse to start the stack while data from a previous MinIO install
+  # has not been migrated to Garage yet (see the Upgrade Guide wiki page)
+  s3-guard:
+    restart: "no"
+    build:
+      context: .
+      dockerfile: Dockerfile-any-sync-init
+    entrypoint: ["bash", "/code/docker-generateconfig/s3-guard.sh"]
+    volumes:
+      - ./.env:/code/.env:ro,Z
+      - ./docker-generateconfig:/code/docker-generateconfig:ro,Z
+      - "${STORAGE_DIR}:/code/storage:Z"
+
   # generate and process any-sync configs
   any-sync-init:
     restart: "no"
+    depends_on:
+      s3-guard:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: Dockerfile-any-sync-init
@@ -57,36 +73,67 @@ services:
     ports:
       - "127.0.0.1:${REDIS_PORT}:${REDIS_PORT}"
 
-  minio:
-    image: "quay.io/minio/minio:${MINIO_VERSION}"
+  # S3-compatible object storage for any-sync-filenode.
+  # The bucket and the access key are created automatically on first start.
+  garage:
+    image: "dxflrs/garage:${GARAGE_VERSION:?GARAGE_VERSION is not set - your .env is outdated, see https://github.com/anyproto/any-sync-dockercompose/wiki/Upgrade-Guide}"
     restart: unless-stopped
-    command: ["server", "/data", "--console-address", ":${MINIO_WEB_PORT}", "--address", ":${MINIO_PORT}"]
+    command: ["/garage", "server", "--single-node", "--default-bucket", "--default-access-key"]
+    environment:
+      GARAGE_RPC_SECRET: "${GARAGE_RPC_SECRET:?GARAGE_RPC_SECRET is not set - your .env is outdated, see https://github.com/anyproto/any-sync-dockercompose/wiki/Upgrade-Guide}"
+      GARAGE_DEFAULT_ACCESS_KEY: "${AWS_ACCESS_KEY_ID}"
+      GARAGE_DEFAULT_SECRET_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      GARAGE_DEFAULT_BUCKET: "${S3_BUCKET:?S3_BUCKET is not set - your .env is outdated, see https://github.com/anyproto/any-sync-dockercompose/wiki/Upgrade-Guide}"
+    volumes:
+      - ./garage/garage.toml:/etc/garage.toml:ro,Z
+      - "${STORAGE_DIR}/garage:/var/lib/garage:Z"
+    healthcheck:
+      test: ["CMD", "/garage", "status"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # --- one-off migration from MinIO to Garage, see the Upgrade Guide -----------
+  # Not started by "docker compose up"; only by:
+  #   docker compose --profile migrate run --rm s3-migrate
+
+  minio-legacy:
+    profiles: ["migrate"]
+    image: "quay.io/minio/minio:${MINIO_LEGACY_VERSION}"
+    restart: "no"
+    command: ["server", "/data", "--address", ":9000"]
     environment:
       MINIO_ROOT_USER: "${AWS_ACCESS_KEY_ID}"
       MINIO_ROOT_PASSWORD: "${AWS_SECRET_ACCESS_KEY}"
     volumes:
       - "${STORAGE_DIR}/minio:/data:Z"
     healthcheck:
-      test: bash -c ':> /dev/tcp/127.0.0.1/${MINIO_PORT}' || exit 1
+      test: bash -c ':> /dev/tcp/127.0.0.1/9000' || exit 1
       interval: 5s
       timeout: 10s
       retries: 3
-    networks:
-      default:
-        aliases:
-          - "${MINIO_BUCKET}.minio" # <bucket-name>.<endpoint-name>
 
-  create-bucket:
+  s3-migrate:
+    profiles: ["migrate"]
+    image: "rclone/rclone:${RCLONE_VERSION}"
     restart: "no"
-    image: quay.io/minio/mc:latest
     depends_on:
-      - minio
-    entrypoint: >
-      /bin/sh -c "
-      until (/usr/bin/mc alias set minio http://minio:${MINIO_PORT} '${AWS_ACCESS_KEY_ID}' '${AWS_SECRET_ACCESS_KEY}') do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc mb minio/${MINIO_BUCKET};
-      exit 0;
-      "
+      minio-legacy:
+        condition: service_healthy
+      garage:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      S3_BUCKET: "${S3_BUCKET}"
+      S3_REGION: "${S3_REGION}"
+      S3_LEGACY_BUCKET: "${S3_LEGACY_BUCKET}"
+    entrypoint: ["/bin/sh", "/code/docker-generateconfig/migrate-s3.sh"]
+    volumes:
+      - ./docker-generateconfig:/code/docker-generateconfig:ro,Z
+      - "${STORAGE_DIR}:/code/storage:Z"
+  # ---------------------------------------------------------------------------
 
   any-sync-coordinator_bootstrap:
     image: "ghcr.io/anyproto/any-sync-coordinator:${ANY_SYNC_COORDINATOR_VERSION}"
@@ -124,7 +171,7 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      minio:
+      garage:
         condition: service_healthy
       any-sync-coordinator:
         condition: service_started

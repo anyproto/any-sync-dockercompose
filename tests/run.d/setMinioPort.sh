@@ -1,5 +1,0 @@
-# Writes Minio port configurations to .env.override
-cat <<EOF > $PROJECT_DIR/.env.override
-MINIO_PORT=$MINIO_PORT
-MINIO_WEB_PORT=$MINIO_WEB_PORT
-EOF

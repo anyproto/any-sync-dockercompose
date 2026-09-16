@@ -41,8 +41,19 @@ restart: down start
 update: pull down start
 upgrade: down clean start
 
+# one-off migration of filenode blobs from MinIO to Garage, see the Upgrade Guide wiki page
+migrate:
+	$(DOCKER_COMPOSE) --profile migrate run --rm s3-migrate
+	$(DOCKER_COMPOSE) --profile migrate rm -sf minio-legacy
+
 STORAGE_DIR := $(shell grep -m1 '^STORAGE_DIR=' .env 2>/dev/null | cut -d= -f2- | tr -d '"')
 STORAGE_DIR := $(if $(STORAGE_DIR),$(STORAGE_DIR),./storage)
 
 cleanEtcStorage:
 	rm -rf etc/ $(STORAGE_DIR)
+
+# remove the old MinIO data kept as a backup after the migration to Garage
+cleanLegacyMinio:
+	@[ -f $(STORAGE_DIR)/garage/.migrated-from-minio ] || { echo "Error: migration to Garage was not completed — refusing to delete $(STORAGE_DIR)/minio. See https://github.com/anyproto/any-sync-dockercompose/wiki/Upgrade-Guide"; exit 1; }
+	@echo "⚠️  Removing $(STORAGE_DIR)/minio — make sure your files are accessible in the Anytype client first."
+	rm -rf $(STORAGE_DIR)/minio
