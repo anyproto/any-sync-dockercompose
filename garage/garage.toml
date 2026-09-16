@@ -1,0 +1,19 @@
+# Garage configuration for a single-node any-sync deployment.
+# Docs: https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/
+#
+# The RPC secret is passed via the GARAGE_RPC_SECRET environment variable
+# (see .env). Ports are container-internal only and are not published to the host.
+
+metadata_dir = "/var/lib/garage/meta"
+data_dir     = "/var/lib/garage/data"
+db_engine    = "sqlite"
+
+replication_factor = 1
+
+rpc_bind_addr   = "[::]:3901"
+rpc_public_addr = "garage:3901"
+
+[s3_api]
+api_bind_addr = "[::]:3900"
+# must match 's3Store.region' in the any-sync-filenode config (S3_REGION in .env)
+s3_region     = "us-east-1"

@@ -31,9 +31,9 @@ nodeSync:
 
 s3Store:
     enabled: false
-    region: us-east-1
-    endpoint: http://minio:%MINIO_PORT%
-    bucket: %MINIO_BUCKET%
+    region: %S3_REGION%
+    endpoint: %S3_ENDPOINT%
+    bucket: %S3_BUCKET%
     keyPrefix: "node_storage/node-2"
     forcePathStyle: true # 'true' for self-hosted S3 Object Storage
 

@@ -9,6 +9,12 @@ A self-hosted any-sync network, designed for personal use, review, or testing pu
 > [!WARNING]
 > Before upgrading, read the [Upgrade Guide](../../wiki/Upgrade-Guide).
 
+> [!IMPORTANT]
+> MinIO has been replaced by [Garage](https://garagehq.deuxfleurs.fr/) (see
+> [#178](https://github.com/anyproto/any-sync-dockercompose/issues/178)).
+> Existing installs must run a one-off data migration — see the [Upgrade Guide](../../wiki/Upgrade-Guide).
+> The stack refuses to start until the migration is done; no data is deleted.
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/compose/install/) with Compose plugin v2+
@@ -22,12 +28,12 @@ The stack runs the following services:
 |---|---|---|
 | `any-sync-coordinator` | Network coordinator, manages spaces and members | MongoDB |
 | `any-sync-node` ×3 | Document sync nodes | coordinator |
-| `any-sync-filenode` | File storage node | coordinator, MinIO, Redis |
+| `any-sync-filenode` | File storage node | coordinator, Garage, Redis |
 | `any-sync-consensusnode` | Consensus for conflict resolution | coordinator |
 | `netcheck` | Periodic connectivity health monitor | all nodes |
 | MongoDB | Coordinator state | — |
 | Redis | Filenode index | — |
-| MinIO | S3-compatible object storage for files | — |
+| Garage | S3-compatible object storage for files | — |
 
 Optional service: `anytype-cli` (commented out in `docker-compose.yml`) — HTTP/gRPC API server for automation.
 
@@ -95,6 +101,8 @@ make upgrade    # ⚠️  Full reset: removes containers and volumes, then start
 make down       # Stop and remove containers (data preserved)
 make clean      # ⚠️  docker system prune --all --volumes (removes all Docker data)
 make cleanEtcStorage  # Remove generated ./etc/ configs and ./storage/
+make migrate    # One-off migration of file storage from MinIO to Garage (see Upgrade Guide)
+make cleanLegacyMinio # Remove the old MinIO data kept as a backup after the migration
 ```
 
 ## Documentation
