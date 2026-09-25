@@ -100,7 +100,8 @@ services:
 
   minio-legacy:
     profiles: ["migrate"]
-    image: "quay.io/minio/minio:${MINIO_LEGACY_VERSION}"
+    # official MinIO images are no longer published; defaults to a community build
+    image: "${MINIO_LEGACY_IMAGE:-pgsty/minio:RELEASE.2026-08-04T00-00-00Z}"
     restart: "no"
     command: ["server", "/data", "--address", ":9000"]
     environment:
